@@ -1,2 +1,2 @@
-# Lilthinc-
+# Lilthinc
 LilLightning
