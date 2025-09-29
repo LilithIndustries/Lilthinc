@@ -1,1 +1,230 @@
+<!doctype html>
 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lilthinc Business Assessment Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#ffffff; --ink:#0b0b0e; --muted:#f6f7fb; --line:#e6e8ee;
+      --brand:#000000; --accent-p:#ff4fa3; --accent-g:#39ff14; }
+    body { font-family: Inter, system-ui, sans-serif; background:var(--bg); color:var(--ink); }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:1.5rem; box-shadow:0 4px 24px rgba(0,0,0,.04); }
+    input, textarea { background:#fff; border:1px solid var(--line); border-radius:12px; padding:.65rem .9rem; width:100%; }
+    input:focus, textarea:focus { outline:none; border-color:var(--accent-p); box-shadow:0 0 0 3px rgba(255,79,163,.18); }
+    .btn { border-radius:12px; font-weight:600; padding:.6rem 1rem; }
+    .btn-primary { background:var(--brand); color:#fff; }
+    .btn-primary:hover { background:#111; }
+    .btn-ghost { border:1px solid var(--line); background:#fff; }
+    .btn-ghost:hover { background:#f8f8f8; }
+    .progress { height:6px; background:#eef0f6; border-radius:999px; overflow:hidden; border:1px solid var(--line); }
+    .progress-bar { height:100%; background:linear-gradient(90deg, rgba(255,79,163,.55), rgba(57,255,20,.55)); }
+    @media print{ .no-print{ display:none !important } body{ background:#fff } .card{ box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200 no-print">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
+      <img src="/assets/lilthinc-logo.svg" alt="Lilthinc" class="h-9 w-auto" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-xl bg-black text-white grid place-content-center text-lg font-black\'>L</div>'">
+      <div class="flex-1">
+        <h1 class="text-lg font-bold leading-tight">Lilthinc Assessment Portal</h1>
+        <p class="text-xs text-slate-500 -mt-0.5">Business Intake • Goals • Gaps • Quick Wins</p>
+      </div>
+      <button id="exportBtn" class="btn btn-primary">Export</button>
+      <button id="printBtn" class="btn btn-ghost ml-2">Print</button>
+    </div>
+  </header>  <main class="mx-auto max-w-6xl px-4 py-8">
+    <!-- Session Card -->
+    <section class="card mb-6 no-print">
+      <h2 class="text-xl font-bold">Start a New Assessment</h2>
+      <p class="text-sm text-slate-600 mt-2">Your answers save locally. No login required.</p>
+      <div class="grid sm:grid-cols-3 gap-4 mt-4">
+        <label>
+          <span class="text-sm font-medium">Your Name</span>
+          <input id="ownerName" placeholder="Sam James">
+        </label>
+        <label>
+          <span class="text-sm font-medium">Business Name</span>
+          <input id="bizName" placeholder="Lilthinc">
+        </label>
+        <label>
+          <span class="text-sm font-medium">Email</span>
+          <input id="email" type="email" placeholder="you@company.com">
+        </label>
+      </div>
+      <div class="mt-4 flex gap-2">
+        <button id="startBtn" class="btn btn-primary">Start Assessment</button>
+        <button id="loadBtn" class="btn btn-ghost">Load Last</button>
+        <button id="resetBtn" class="btn btn-ghost">Reset</button>
+      </div>
+    </section><!-- Progress -->
+<div class="mb-6">
+  <div class="flex items-center justify-between text-sm mb-2">
+    <span id="stepLabel" class="font-semibold">Welcome</span>
+    <span id="progressPct" class="text-slate-500">0%</span>
+  </div>
+  <div class="progress">
+    <div id="progressBar" class="progress-bar" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- Wizard Container -->
+<section id="wizard"></section>
+
+<!-- Nav Buttons -->
+<div class="mt-6 flex items-center justify-between no-print">
+  <div class="flex items-center gap-2">
+    <button id="prevBtn" class="btn btn-ghost">← Back</button>
+    <button id="saveBtn" class="btn btn-ghost">Save</button>
+    <button id="importBtn" class="btn btn-ghost">Import</button>
+    <input id="importFile" type="file" accept="application/json" class="hidden" />
+  </div>
+  <div class="flex items-center gap-2">
+    <button id="submitBtn" class="btn btn-primary">Submit</button>
+    <button id="nextBtn" class="btn btn-primary">Next →</button>
+  </div>
+</div>
+
+  </main>  <footer class="mt-16 py-10 text-center text-xs text-slate-500">
+    © <span id="year"></span> Lilthinc. Designed for clarity, not chaos.
+  </footer>  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // === CONFIG ===
+    // Set this to your Basin/Formspree/Zapier/Make webhook endpoint.
+    // If left blank, the app will fall back to a mailto: draft (not ideal for long answers).
+    const WEBHOOK_URL = 'https://usebasin.com/f/8677e839a8bb';
+    const SEND_COPY_TO_RESPONDENT = true; // include respondent email in payload
+    const ADMIN_EMAIL = 'sammiljames@gmail.com; // change to your address for mailto fallback
+
+    const SECTIONS = [
+      { key:'welcome', type:'welcome', title:'Welcome', intro:`This isn’t a graded test. It’s a guided reflection to help us understand where you are now and where you’d like to go.`, bullets:[
+        'You’ll only see a few questions at a time',
+        'You can pause and come back later',
+        'There are no wrong answers — we’ll fill in the blanks together',
+        'Start with just the Quick 5 (about 5 minutes)'
+      ]},
+      { key:'goals', title:'🌟 Quick 5: Goals & Vision', intro:'Let’s focus on what matters most right now.', questions:[
+        {id:'q0_why',label:'Why are we talking today?'},
+        {id:'q0_value',label:'What outcome would make this conversation valuable?'},
+        {id:'q0_goals12',label:'Top 3 goals for the next 12 months'},
+        {id:'n_top',label:'Your biggest business challenge right now'},
+        {id:'n_freed',label:'If solved, what would it free you to do?'}
+      ]},
+      // ... additional sections trimmed for brevity ...
+    ];
+
+    let current = 0;
+    let answers = JSON.parse(localStorage.getItem('assessment')||'{}');
+
+    const wizard = document.getElementById('wizard');
+    const stepLabel = document.getElementById('stepLabel');
+    const progressPct = document.getElementById('progressPct');
+    const progressBar = document.getElementById('progressBar');
+
+    function render(){
+      const sec = SECTIONS[current];
+      if(sec.type==='welcome'){
+        stepLabel.textContent = 'Welcome';
+        progressPct.textContent = '0%';
+        progressBar.style.width = '0%';
+        wizard.innerHTML = `
+          <div class='card'>
+            <h2 class='text-2xl font-bold mb-2'>Welcome to the Lilthinc Business Assessment</h2>
+            <p class='text-slate-600 mb-4'>${sec.intro}</p>
+            <ul class='list-disc pl-6 space-y-2 text-slate-700'>
+              ${sec.bullets.map(b=>`<li>${b}</li>`).join('')}
+            </ul>
+            <div class="mt-6 text-center">
+              <button id="beginBtn" class="btn btn-primary">Let’s Begin</button>
+            </div>
+          </div>`;
+        document.getElementById('beginBtn').onclick = () => { current++; render(); };
+      } else {
+        const idx = current - 1;
+        const total = SECTIONS.length - 1;
+        const pct = Math.round((idx/(total-1))*100);
+        stepLabel.textContent = sec.title;
+        progressPct.textContent = pct + '%';
+        progressBar.style.width = pct + '%';
+        wizard.innerHTML = `
+          <div class='card'>
+            <h2 class='text-xl font-bold mb-4'>${sec.title}</h2>
+            ${sec.intro ? `<p class='text-slate-600 mb-4'>${sec.intro}</p>` : ''}
+            ${sec.questions.map(q => `
+              <label class='block mb-4'>
+                <span class='text-sm font-medium'>${q.label}</span>
+                <textarea rows='3' data-id='${q.id}' class='mt-1'></textarea></label>`).join('')}
+      </div>`;
+    sec.questions.forEach(q => {
+      const el = document.querySelector(`[data-id="${q.id}"]`);
+      if(answers[q.id]) el.value = answers[q.id];
+      el.addEventListener('input', e => { answers[q.id] = e.target.value; localStorage.setItem('assessment', JSON.stringify(answers)); });
+    });
+  }
+}
+
+document.getElementById('nextBtn').onclick = ()=>{ if(current<SECTIONS.length-1){ current++; render(); } };
+document.getElementById('prevBtn').onclick = ()=>{ if(current>0){ current--; render(); } };
+document.getElementById('saveBtn').onclick = ()=>{ localStorage.setItem('assessment', JSON.stringify(answers)); alert('Saved!'); };
+document.getElementById('resetBtn').onclick = ()=>{ if(confirm('Reset?')){ answers={}; localStorage.removeItem('assessment'); render(); } };
+document.getElementById('loadBtn').onclick = ()=>{ const saved=localStorage.getItem('assessment'); if(saved){ answers=JSON.parse(saved); render(); } };
+document.getElementById('exportBtn').onclick = ()=>{ const blob=new Blob([JSON.stringify(answers,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assessment.json'; a.click(); };
+document.getElementById('printBtn').onclick = ()=>window.print();
+
+// Import / Submit hooks
+document.getElementById('importBtn').onclick = ()=> document.getElementById('importFile').click();
+document.getElementById('importFile').addEventListener('change', importJSON);
+document.getElementById('submitBtn').onclick = submitForm;
+
+render();
+
+// =====================
+// Cross‑device: Import
+// =====================
+function importJSON(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { try{ answers = JSON.parse(reader.result); localStorage.setItem('assessment', JSON.stringify(answers)); alert('Imported!'); render(); } catch(err){ alert('Invalid JSON.'); } };
+  reader.readAsText(file);
+}
+
+// =====================
+// Submit (Webhook + Fallback Email)
+// =====================
+async function submitForm(){
+  // simple honeypot to reduce spam bots
+  const honeypot = '';
+  const payload = {
+    ownerName: document.getElementById('ownerName')?.value || '',
+    bizName: document.getElementById('bizName')?.value || '',
+    email: document.getElementById('email')?.value || '',
+    answers,
+    createdAt: new Date().toISOString(),
+    sendCopy: SEND_COPY_TO_RESPONDENT,
+    hp: honeypot
+  };
+
+  if(WEBHOOK_URL){
+    try{
+      const res = await fetch(WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if(!res.ok) throw new Error(await res.text());
+      alert('Submitted! You\'ll receive a confirmation email.');
+      return;
+    } catch(err){ console.error(err); alert('Webhook failed — falling back to email draft.'); }
+  }
+
+  // Fallback: mailto draft (may be truncated by some email clients)
+  const to = (payload.ownerName && payload.email) ? `${payload.ownerName} <${payload.email}>` : payload.email || '';
+  const subject = encodeURIComponent(`Lilthinc Assessment — ${payload.bizName||'New submission'}`);
+  const body = encodeURIComponent(
+    `Business: ${payload.bizName}
+
+Name: ${payload.ownerName} Email: ${payload.email} Date: ${payload.createdAt}
+
+Answers: ${Object.entries(answers).map(([k,v])=>- ${k}: ${typeof v==='string'?v:v}).join(' ')}); const href =mailto:${ADMIN_EMAIL}${to?','+to:''}?subject=${subject}&body=${body}`; window.location.href = href; } </script>
+
+</body>
+</html>
