@@ -12,9 +12,9 @@
       --brand:#000000; --accent-p:#ff4fa3; --accent-g:#39ff14; }
     body { font-family: Inter, system-ui, sans-serif; background:var(--bg); color:var(--ink); }
     .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:1.5rem; box-shadow:0 4px 24px rgba(0,0,0,.04); }
-    input, textarea { background:#fff; border:1px solid var(--line); border-radius:12px; padding:.65rem .9rem; width:100%; }
+    input, textarea { background:#fff; border:1px solid var(--line); border-radius:12px; padding:1rem 1.25rem; width:100%; margin-top:.5rem; }
     input:focus, textarea:focus { outline:none; border-color:var(--accent-p); box-shadow:0 0 0 3px rgba(255,79,163,.18); }
-    .btn { border-radius:12px; font-weight:600; padding:.6rem 1rem; }
+    .btn { border-radius:12px; font-weight:600; padding:.75rem 1.25rem; }
     .btn-primary { background:var(--brand); color:#fff; }
     .btn-primary:hover { background:#111; }
     .btn-ghost { border:1px solid var(--line); background:#fff; }
@@ -22,6 +22,10 @@
     .progress { height:6px; background:#eef0f6; border-radius:999px; overflow:hidden; border:1px solid var(--line); }
     .progress-bar { height:100%; background:linear-gradient(90deg, rgba(255,79,163,.55), rgba(57,255,20,.55)); }
     @media print{ .no-print{ display:none !important } body{ background:#fff } .card{ box-shadow:none; } }
+    @media (max-width: 640px) {
+      .card { padding:1rem; }
+      h2 { font-size:1.25rem; }
+    }
   </style>
 </head>
 <body>
@@ -75,14 +79,9 @@
 
 <!-- Nav Buttons -->
 <div class="mt-6 flex items-center justify-between no-print">
+  <button id="prevBtn" class="btn btn-ghost">← Back</button>
   <div class="flex items-center gap-2">
-    <button id="prevBtn" class="btn btn-ghost">← Back</button>
     <button id="saveBtn" class="btn btn-ghost">Save</button>
-    <button id="importBtn" class="btn btn-ghost">Import</button>
-    <input id="importFile" type="file" accept="application/json" class="hidden" />
-  </div>
-  <div class="flex items-center gap-2">
-    <button id="submitBtn" class="btn btn-primary">Submit</button>
     <button id="nextBtn" class="btn btn-primary">Next →</button>
   </div>
 </div>
@@ -92,15 +91,53 @@
   </footer>  <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // === CONFIG ===
-    // Set this to your Basin/Formspree/Zapier/Make webhook endpoint.
-    // If left blank, the app will fall back to a mailto: draft (not ideal for long answers).
-    const WEBHOOK_URL = 'https://usebasin.com/f/8677e839a8bb';
-    const SEND_COPY_TO_RESPONDENT = true; // include respondent email in payload
-    const ADMIN_EMAIL = 'sammiljames@gmail.com; // change to your address for mailto fallback
+    // === Basin Webhook Config ===
+    const WEBHOOK_URL = "https://usebasin.com/f/8677e839a8bb"; // your Basin endpoint
+
+    async function submitToBasin(payload){
+      try{
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok){
+          const t = await res.text().catch(()=> '');
+          throw new Error(t || 'Non-200 response');
+        }
+        // Success UI
+        const wizard = document.getElementById('wizard');
+        wizard.innerHTML = `
+          <div class='card'>
+            <h2 class='text-2xl font-bold mb-2'>Thanks! 🎉</h2>
+            <p class='text-slate-700'>Your assessment was submitted. Check your inbox for a copy if autoresponder is enabled.</p>
+            <div class='mt-4'>
+              <button id='restartBtn' class='btn btn-primary'>Start another response</button>
+            </div>
+          </div>`;
+        document.getElementById('stepLabel').textContent = 'Submitted';
+        document.getElementById('progressPct').textContent = '100%';
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('restartBtn').onclick = ()=>{ current = 1; answers = {}; localStorage.removeItem('assessment'); render();
+
+    // Make the header Start button show the assessment (and scroll to it)
+    const startBtn = document.getElementById('startBtn');
+    if (startBtn) {
+      startBtn.onclick = () => {
+        current = 0; // ensure we start at Welcome
+        render();
+        const wiz = document.getElementById('wizard');
+        if (wiz) window.scrollTo({ top: wiz.offsetTop - 20, behavior: 'smooth' });
+      };
+    } };
+      } catch(err){
+        console.error(err);
+        alert('There was a problem sending your answers. Please check your internet and try again.');
+      }
+    }
 
     const SECTIONS = [
-      { key:'welcome', type:'welcome', title:'Welcome', intro:`This isn’t a graded test. It’s a guided reflection to help us understand where you are now and where you’d like to go.`, bullets:[
+      { key:'welcome', type:'welcome', title:'Welcome', intro:`This isn’t a test. It’s a guided reflection to help us understand where you are now and where you’d like to go.`, bullets:[
         'You’ll only see a few questions at a time',
         'You can pause and come back later',
         'There are no wrong answers — we’ll fill in the blanks together',
@@ -126,10 +163,14 @@
 
     function render(){
       const sec = SECTIONS[current];
+      const nextBtn = document.getElementById('nextBtn');
+      const isLast = current === SECTIONS.length - 1;
+      nextBtn.textContent = isLast ? 'Submit' : 'Next →';
+
       if(sec.type==='welcome'){
-        stepLabel.textContent = 'Welcome';
-        progressPct.textContent = '0%';
-        progressBar.style.width = '0%';
+        document.getElementById('stepLabel').textContent = 'Welcome';
+        document.getElementById('progressPct').textContent = '0%';
+        document.getElementById('progressBar').style.width = '0%';
         wizard.innerHTML = `
           <div class='card'>
             <h2 class='text-2xl font-bold mb-2'>Welcome to the Lilthinc Business Assessment</h2>
@@ -146,9 +187,9 @@
         const idx = current - 1;
         const total = SECTIONS.length - 1;
         const pct = Math.round((idx/(total-1))*100);
-        stepLabel.textContent = sec.title;
-        progressPct.textContent = pct + '%';
-        progressBar.style.width = pct + '%';
+        document.getElementById('stepLabel').textContent = sec.title;
+        document.getElementById('progressPct').textContent = pct + '%';
+        document.getElementById('progressBar').style.width = pct + '%';
         wizard.innerHTML = `
           <div class='card'>
             <h2 class='text-xl font-bold mb-4'>${sec.title}</h2>
@@ -164,9 +205,60 @@
       el.addEventListener('input', e => { answers[q.id] = e.target.value; localStorage.setItem('assessment', JSON.stringify(answers)); });
     });
   }
+}</p>
+        <ul class='list-disc pl-6 space-y-2 text-slate-700'>
+          ${sec.bullets.map(b=>`<li>${b}</li>`).join('')}
+        </ul>
+        <div class="mt-6 text-center">
+          <button id="beginBtn" class="btn btn-primary">Let’s Begin</button>
+        </div>
+      </div>`;
+    document.getElementById('beginBtn').onclick = () => { current++; render(); };
+  } else {
+    const idx = current - 1;
+    const total = SECTIONS.length - 1;
+    const pct = Math.round((idx/(total-1))*100);
+    stepLabel.textContent = sec.title;
+    progressPct.textContent = pct + '%';
+    progressBar.style.width = pct + '%';
+    wizard.innerHTML = `
+      <div class='card'>
+        <h2 class='text-xl font-bold mb-4'>${sec.title}</h2>
+        ${sec.intro ? `<p class='text-slate-600 mb-4'>${sec.intro}</p>` : ''}
+        ${sec.questions.map(q => `
+          <label class='block mb-4'>
+            <span class='text-sm font-medium'>${q.label}</span>
+            <textarea rows='3' data-id='${q.id}' class='mt-1'></textarea>
+          </label>`).join('')}
+      </div>`;
+    sec.questions.forEach(q => {
+      const el = document.querySelector(`[data-id="${q.id}"]`);
+      if(answers[q.id]) el.value = answers[q.id];
+      el.addEventListener('input', e => { answers[q.id] = e.target.value; localStorage.setItem('assessment', JSON.stringify(answers)); });
+    });
+  }
 }
 
-document.getElementById('nextBtn').onclick = ()=>{ if(current<SECTIONS.length-1){ current++; render(); } };
+document.getElementById('nextBtn').onclick = async ()=>{
+  const isLast = current === SECTIONS.length - 1;
+  if(!isLast){
+    current++;
+    render();
+  } else {
+    const payload = {
+      ownerName: document.getElementById('ownerName')?.value || '',
+      bizName: document.getElementById('bizName')?.value || '',
+      email: document.getElementById('email')?.value || '',
+      answers,
+      createdAt: new Date().toISOString()
+    };
+    const btn = document.getElementById('nextBtn');
+    const original = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    await submitToBasin(payload);
+    btn.disabled = false; btn.textContent = original;
+  }
+}; render(); } };
 document.getElementById('prevBtn').onclick = ()=>{ if(current>0){ current--; render(); } };
 document.getElementById('saveBtn').onclick = ()=>{ localStorage.setItem('assessment', JSON.stringify(answers)); alert('Saved!'); };
 document.getElementById('resetBtn').onclick = ()=>{ if(confirm('Reset?')){ answers={}; localStorage.removeItem('assessment'); render(); } };
@@ -174,57 +266,8 @@ document.getElementById('loadBtn').onclick = ()=>{ const saved=localStorage.getI
 document.getElementById('exportBtn').onclick = ()=>{ const blob=new Blob([JSON.stringify(answers,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assessment.json'; a.click(); };
 document.getElementById('printBtn').onclick = ()=>window.print();
 
-// Import / Submit hooks
-document.getElementById('importBtn').onclick = ()=> document.getElementById('importFile').click();
-document.getElementById('importFile').addEventListener('change', importJSON);
-document.getElementById('submitBtn').onclick = submitForm;
-
 render();
 
-// =====================
-// Cross‑device: Import
-// =====================
-function importJSON(e){
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => { try{ answers = JSON.parse(reader.result); localStorage.setItem('assessment', JSON.stringify(answers)); alert('Imported!'); render(); } catch(err){ alert('Invalid JSON.'); } };
-  reader.readAsText(file);
-}
-
-// =====================
-// Submit (Webhook + Fallback Email)
-// =====================
-async function submitForm(){
-  // simple honeypot to reduce spam bots
-  const honeypot = '';
-  const payload = {
-    ownerName: document.getElementById('ownerName')?.value || '',
-    bizName: document.getElementById('bizName')?.value || '',
-    email: document.getElementById('email')?.value || '',
-    answers,
-    createdAt: new Date().toISOString(),
-    sendCopy: SEND_COPY_TO_RESPONDENT,
-    hp: honeypot
-  };
-
-  if(WEBHOOK_URL){
-    try{
-      const res = await fetch(WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-      if(!res.ok) throw new Error(await res.text());
-      alert('Submitted! You\'ll receive a confirmation email.');
-      return;
-    } catch(err){ console.error(err); alert('Webhook failed — falling back to email draft.'); }
-  }
-
-  // Fallback: mailto draft (may be truncated by some email clients)
-  const to = (payload.ownerName && payload.email) ? `${payload.ownerName} <${payload.email}>` : payload.email || '';
-  const subject = encodeURIComponent(`Lilthinc Assessment — ${payload.bizName||'New submission'}`);
-  const body = encodeURIComponent(
-    `Business: ${payload.bizName}
-
-Name: ${payload.ownerName} Email: ${payload.email} Date: ${payload.createdAt}
-
-Answers: ${Object.entries(answers).map(([k,v])=>- ${k}: ${typeof v==='string'?v:v}).join(' ')}); const href =mailto:${ADMIN_EMAIL}${to?','+to:''}?subject=${subject}&body=${body}`; window.location.href = href; } </script>
-
+  </script>
 </body>
 </html>
