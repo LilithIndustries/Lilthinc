@@ -75,14 +75,25 @@ linear-gradient(180deg,rgba(255,255,255,.34),transparent 34%);}
 .system-meta{position:absolute;font-family:var(--mono);font-size:.61rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-grey)}
 .system-meta-a{top:-4%;left:0}
 .hero-reality{position:absolute;inset:0;pointer-events:none;clip-path:inset(50% 50% 50% 50% round 18px);background:
-linear-gradient(135deg,rgba(255,255,255,.58),rgba(199,203,208,.24)),
-radial-gradient(60% 70% at 20% 80%,rgba(20,35,58,.08),transparent 70%);backdrop-filter:blur(1px);will-change:clip-path}
+linear-gradient(135deg,rgba(255,255,255,.10),rgba(199,203,208,.035)),
+repeating-linear-gradient(0deg,rgba(10,20,38,.028) 0 1px,transparent 1px 26px),
+repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);will-change:clip-path}
 .reality-note{position:absolute;font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;color:var(--charcoal);padding:7px 10px;background:rgba(248,247,243,.72);border-left:1px solid var(--ink)}
 .rn1{top:22%;left:8%}.rn2{top:43%;left:19%}.rn3{top:31%;right:9%}.rn4{top:65%;right:12%}.rn5{bottom:16%;left:27%}
 .reality-trace{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(10,20,38,.38),transparent)}
 .rt1{top:37%;left:10%;width:43%;transform:rotate(2deg)}.rt2{top:55%;right:7%;width:48%;transform:rotate(-1deg)}.rt3{top:73%;left:16%;width:34%;transform:rotate(3deg)}
 .reality-meta{bottom:6%;right:6%}
-.optical-pane{position:absolute;width:330px;height:210px;border-radius:18px;left:50%;top:42%;transform:translate(-50%,-50%);pointer-events:none;opacity:0;will-change:left,top;backdrop-filter:blur(10px) saturate(.86);background:linear-gradient(135deg,rgba(255,255,255,.32),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.72);box-shadow:inset 0 0 0 1px rgba(10,20,38,.08),0 28px 70px rgba(10,20,38,.15);transition:opacity .45s var(--ease)}
+.hero-system-lived{z-index:0;filter:contrast(1.08)}
+.hero-system-lived .system-node{background:rgba(255,255,255,.56);border-color:rgba(10,20,38,.42);color:rgba(10,20,38,.88);box-shadow:0 8px 24px rgba(10,20,38,.06)}
+.hero-system-lived .system-line{background:rgba(10,20,38,.34)}
+.hero-system-lived .node-leadership{transform:translate(-10px,8px) rotate(-.5deg)}
+.hero-system-lived .node-strategy{transform:translate(16px,-5px) rotate(.7deg)}
+.hero-system-lived .node-product{transform:translate(18px,13px) rotate(-1.2deg)}
+.hero-system-lived .node-ops{transform:translate(-8px,-13px) rotate(.8deg)}
+.hero-system-lived .node-commercial{transform:translate(-17px,9px) rotate(-.7deg)}
+.hero-system-lived .node-engineering{transform:translate(12px,-9px) rotate(.6deg)}
+.hero-system-lived .node-customer{transform:translate(-12px,12px) rotate(-.8deg)}
+.optical-pane{position:absolute;width:330px;height:210px;border-radius:18px;left:50%;top:42%;transform:translate(-50%,-50%);pointer-events:none;opacity:0;will-change:left,top;backdrop-filter:blur(1.4px) saturate(.96);background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.012));border:1px solid rgba(255,255,255,.88);box-shadow:inset 0 0 0 1px rgba(10,20,38,.10),inset 0 0 48px rgba(255,255,255,.10),0 22px 54px rgba(10,20,38,.10);transition:opacity .35s var(--ease)}
 .optical-pane::before{content:"";position:absolute;inset:-1px;border-radius:18px;padding:1px;background:linear-gradient(120deg,rgba(93,104,118,.15),rgba(92,70,108,.24),rgba(70,102,106,.15),rgba(174,180,188,.18));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.7}
 .optical-label{position:absolute;top:-27px;right:0;font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;color:var(--graphite)}
 .hero-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:clamp(54px,7.5vh,90px);pointer-events:none}
@@ -509,6 +520,28 @@ radial-gradient(60% 70% at 20% 80%,rgba(20,35,58,.08),transparent 70%);backdrop-
   const sticky = document.querySelector('.hero-sticky');
   const stages = [...document.querySelectorAll('.stage')];
 
+  // Build a second, misaligned version of the same system. The optical pane
+  // reveals this layer so it always changes something beneath the cursor,
+  // instead of depending on a sparse annotation happening to sit under it.
+  const livedSystem = system.cloneNode(true);
+  livedSystem.id = 'livedSystem';
+  livedSystem.classList.add('hero-system-lived');
+  const livedMeta = livedSystem.querySelector('.system-meta-a');
+  if(livedMeta) livedMeta.textContent = 'experienced system';
+  const livedLabels = {
+    '.node-leadership':'Leadership / pressure',
+    '.node-strategy':'Strategy / interpreted',
+    '.node-product':'Product / reprioritised',
+    '.node-ops':'Operations / workarounds',
+    '.node-commercial':'Commercial / exceptions',
+    '.node-engineering':'Engineering / start-stop',
+    '.node-customer':'Customer / signal lost'
+  };
+  Object.entries(livedLabels).forEach(([sel,label]) => {
+    const n=livedSystem.querySelector(sel); if(n) n.textContent=label;
+  });
+  reality.prepend(livedSystem);
+
   const updateHeader = () => header.classList.toggle('scrolled', window.scrollY > 30);
   updateHeader();
   addEventListener('scroll', updateHeader, {passive:true});
@@ -533,8 +566,12 @@ radial-gradient(60% 70% at 20% 80%,rgba(20,35,58,.08),transparent 70%);backdrop-
       const p = Math.min(1, Math.max(0, -r.top / total));
       const scale = 3.2 - p * 2.2;
       const y = -50 + p * 4;
-      system.style.transform = `translate(-50%,${y}%) scale(${scale.toFixed(3)})`;
-      system.style.opacity = String(1 - Math.max(0,p-.64)*.95);
+      const mapTransform = `translate(-50%,${y}%) scale(${scale.toFixed(3)})`;
+      const mapOpacity = String(1 - Math.max(0,p-.64)*.95);
+      system.style.transform = mapTransform;
+      system.style.opacity = mapOpacity;
+      livedSystem.style.transform = mapTransform;
+      livedSystem.style.opacity = mapOpacity;
       stages.forEach(el => {
         const n = Number(el.dataset.stage || 1);
         const threshold = n===1 ? .02 : n===2 ? .19 : .47;
