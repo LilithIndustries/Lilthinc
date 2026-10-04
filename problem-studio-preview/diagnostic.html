@@ -24,25 +24,33 @@ p{margin:0 0 12px}.sub{color:var(--graph);max-width:58ch}
 .four span{font-size:14px;color:var(--graph);display:block}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+a{text-underline-offset:3px}
+.interaction-guide{display:inline-flex;align-items:center;gap:9px;margin:20px 0 0;padding:10px 12px;border:1px solid rgba(20,33,61,.28);background:rgba(20,33,61,.055);font:600 11px/1.35 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.interaction-guide::before{content:"↘";font-size:15px}
+.step-help{display:flex;align-items:center;gap:8px;margin:15px 0 4px;font:600 11px/1.35 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.step-help::before{content:"●";font-size:9px}
 .sym{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:28px}
-.sym button,.opt{background:none;border:0;border-bottom:1px solid var(--silver);text-align:left;padding:13px 10px 13px 14px;border-left:3px solid transparent;transition:background .2s}
+.sym button,.opt{min-height:52px;background:rgba(255,255,255,.18);border:1px solid var(--silver);text-align:left;padding:13px 48px 13px 14px;position:relative;transition:background .2s,border-color .2s,transform .2s}
+.sym button::after{content:"SELECT";position:absolute;right:12px;top:50%;transform:translateY(-50%);font:600 10px var(--mono);letter-spacing:.08em;color:var(--graph)}
+.sym button[aria-pressed=true]::after{content:"SELECTED ✓";color:var(--blue)}
+.sym button:hover,.opt:hover{border-color:var(--blue);background:var(--fog)}
+.sym button:active,.chip:active,.custom-use:active,.nx:active,.ghost:active{transform:translateY(1px)}
 .custom-sym{margin-top:32px;padding:22px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--silver)}
 .custom-sym label{display:block;margin-bottom:8px}.custom-sym textarea{width:100%;min-height:92px;background:rgba(255,255,255,.28);border:1px solid var(--silver);padding:12px;font:15px/1.5 var(--sans);color:var(--ink);resize:vertical}
-.custom-sym .custom-actions{display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap}.custom-sym .custom-use{background:var(--ink);color:var(--bg);border:0;padding:10px 15px}.custom-sym .custom-help{font-size:13px;color:var(--graph)}
+.custom-sym .custom-actions{display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap}.custom-sym .custom-use{min-height:46px;background:var(--ink);color:var(--bg);border:0;padding:10px 15px}.custom-sym .custom-help{font-size:13px;color:var(--graph)}
 .custom-path{margin-top:24px;border-left:2px solid var(--blue);padding:4px 0 4px 14px}.custom-path p{margin:6px 0}.custom-path a{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue);text-decoration:none;border-bottom:1px solid var(--blue)}
-.sym button:hover,.opt:hover{background:var(--fog)}
-[aria-pressed=true]{border-left-color:var(--blue)!important;background:var(--fog)!important;font-weight:600}
+[aria-pressed=true]{border-color:var(--blue)!important;background:var(--fog)!important;font-weight:600}
 .mech{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:30px;border-top:1px solid var(--ink)}
 .mech article{padding:16px 16px 8px 0}.mech article+article{padding-left:16px;border-left:1px solid var(--silver)}
 .mech h3{margin:6px 0 8px}.mech p{font-size:15px;color:var(--graph)}
-.lk{background:none;border:0;border-bottom:1px solid var(--blue);padding:0;font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.lk{min-height:44px;background:none;border:1px solid rgba(20,33,61,.35);padding:9px 11px;font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}.lk::after{content:" →"}.lk:hover{background:rgba(20,33,61,.06)}
 .pull{font:italic 1.5rem/1.3 var(--serif);margin:26px 0 6px;max-width:34ch}
 .map{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:start;margin-top:20px}
 svg text{font-family:var(--sans)}
 .edge{stroke:var(--silver);stroke-width:1;fill:none;transition:stroke .3s}
 .edge.on{stroke:var(--blue);stroke-width:1.8;stroke-dasharray:6 5;animation:fl 1.4s linear infinite}
 @keyframes fl{to{stroke-dashoffset:-22}}
-.nd{cursor:pointer}.nd circle.c{fill:var(--bg);stroke:var(--ink);stroke-width:1.5;transition:all .25s}
+.nd{cursor:pointer}.nd circle.c{fill:var(--bg);stroke:var(--ink);stroke-width:1.5;transition:all .25s}.nd:hover circle.c{r:15;stroke:var(--blue);stroke-width:2.5}
 .nd.rel circle.c{stroke:var(--blue);stroke-width:2.5}
 .nd.sel circle.c{fill:var(--blue)}.nd text{font-size:25px;fill:var(--ink)}
 .nd:focus,.nd:focus-visible{outline:none}.nd:focus-visible circle.c{stroke-width:4;stroke:var(--blue)}
@@ -50,7 +58,7 @@ svg text{font-family:var(--sans)}
 .panel dt{font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--graph);margin-top:16px}
 .panel dd{margin:3px 0 0;font-size:15.5px}
 .sim{margin-top:26px}.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 22px}
-.chip{border:1px solid var(--ink);background:none;border-radius:0;padding:8px 12px;font-size:14px}
+.chip{min-height:44px;border:1px solid var(--ink);background:rgba(255,255,255,.16);border-radius:0;padding:9px 13px;font-size:14px;transition:background .18s,color .18s,border-color .18s}.chip:hover{background:var(--fog);border-color:var(--blue)}.chip[aria-pressed=true]::before{content:"✓ ";font-weight:700}
 .chip[aria-pressed=true]{background:var(--ink)!important;color:var(--bg);border-color:var(--ink)!important;font-weight:400}
 .bars{margin:18px 0}.br{display:grid;grid-template-columns:96px 1fr 44px;gap:12px;align-items:center;margin:9px 0;font-size:14px}
 .tr{position:relative;height:18px;background:var(--fog)}
@@ -62,7 +70,7 @@ svg text{font-family:var(--sans)}
 .note{font:12px/1.5 var(--mono);color:var(--graph);border-left:2px solid var(--silver);padding-left:10px;margin:14px 0}
 .q{border-left:1px solid var(--silver);padding:2px 0 2px 16px;margin:10px 0}.q b{display:block;font-weight:600}
 .q i{color:var(--graph);font-style:normal}
-.nx{background:var(--ink);color:var(--bg);border:0;padding:10px 16px;font-size:15px;margin-top:8px}
+.nx{min-height:46px;background:var(--ink);color:var(--bg);border:0;padding:10px 16px;font-size:15px;margin-top:8px}
 .nx:hover{background:var(--blue)}
 .find{border-top:1px solid var(--ink);margin-top:22px;padding-top:14px;max-width:62ch}
 .chk{list-style:none;padding:0;margin:26px 0 0;columns:2;column-gap:44px}
@@ -73,7 +81,7 @@ svg text{font-family:var(--sans)}
 .cta{background:var(--ink);color:var(--bg);border:0;padding:16px 28px;font-size:17px;text-decoration:none;display:inline-block}
 .cta:hover{background:var(--blue)}
 textarea{width:100%;min-height:150px;background:transparent;border:1px solid var(--ink);padding:12px;font:13px/1.5 var(--mono);color:var(--ink);resize:vertical}
-.ghost{background:none;border:1px solid var(--ink);padding:10px 16px;margin-top:10px}
+.ghost{min-height:44px;background:none;border:1px solid var(--ink);padding:10px 16px;margin-top:10px}
 .ghost:hover{background:var(--fog)}
 footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 @media(max-width:860px){.four,.mech{grid-template-columns:1fr 1fr}.four div:nth-child(3){border-left:0;padding-left:0}.mech article:nth-child(odd){padding-left:0;border-left:0}
@@ -100,6 +108,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Part 1 · What you can see</div>
 <h2>What are you seeing?</h2>
 <p class="sub">Choose what is being experienced first. Leave the proposed solution aside for a moment.</p>
+<div class="interaction-guide">Click one option below, or describe your own</div>
 <div class="sym" id="sym"></div>
 <div class="custom-sym">
   <label for="customSym"><span class="mk">Something else?</span></label>
@@ -116,6 +125,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Part 2 · What could be causing it</div>
 <h2>Seven places worth looking</h2>
 <p class="sub">These are not stages, levels or scores. Each lens is a place to look, and every one of them touches the others. A problem may sit in one lens or in several at once.</p>
+<div class="interaction-guide">Click or tap any point on the map to open it</div>
 <div class="map">
 <svg id="svg" viewBox="0 10 680 540" role="group" aria-label="System map of seven interconnected lenses. Select a lens to read about it."></svg>
 <div class="panel" id="lensOut" aria-live="polite"></div>
@@ -126,8 +136,8 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Part 3 · What is holding things up</div>
 <h2>What changes when the response matches the real limit?</h2>
 <p class="sub">Pick a situation, then try a response. The same response can help in one situation and do very little in another. The difference is what is actually limiting the outcome.</p>
-<div class="mk sim">1 · Situation</div><div class="row" id="scen"></div>
-<div class="mk">2 · Intervention</div><div class="row" id="ivs"></div>
+<div class="mk sim">1 · Situation</div><div class="step-help">Choose one situation</div><div class="row" id="scen"></div>
+<div class="mk">2 · Response</div><div class="step-help">Then choose one response and compare the result</div><div class="row" id="ivs"></div>
 <div id="scDesc" class="sub"></div>
 <div class="bars" id="bars"></div>
 <div class="res" id="res" aria-live="polite"></div>
@@ -138,6 +148,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Part 4 · What are you thinking of changing?</div>
 <h2>Sometimes the solution arrives before the problem is clear</h2>
 <p class="sub">Choose something people commonly arrive with, then keep asking questions. The examples are illustrative, and they do not all end the same way.</p>
+<div class="interaction-guide">Choose one proposed solution, then use the question button that appears</div>
 <div class="row" id="sol"></div>
 <div id="solOut" aria-live="polite"></div>
 </div></section>
@@ -145,6 +156,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <section id="p5"><div class="w">
 <div class="mk">Self-test · for thought, not for scoring</div>
 <h2>Questions worth asking</h2>
+<div class="interaction-guide">Tick any question that feels relevant — your selections are added to the summary</div>
 <ul class="chk" id="chk"></ul>
 <p class="note">Nothing is calculated. A ticked question is simply somewhere worth looking.</p>
 </div></section>
@@ -152,7 +164,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <section class="close" id="contact"><div class="w">
 <p class="big" style="margin-top:0">You may already know what hurts.<br>The harder question is what is producing it.</p>
 <h2>Bring us the symptom. We’ll investigate the system around it.</h2>
-<a class="cta" href="#contact-box">Bring us a problem</a>
+<a class="cta" href="#contact-box">Build my summary ↓</a>
 <div id="contact-box" style="margin-top:56px;max-width:640px">
 <div class="mk">Your path through this page</div>
 <p class="sub" style="margin-top:8px">A plain-text record of what you selected, to paste into whatever message you send. It is not a diagnosis.</p>
@@ -292,7 +304,7 @@ $("#customSym").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key=
 function notes(){const L=[];
  L.push("What I am seeing: "+(st.customSym|| (st.sym==null?"(not selected)":SY[st.sym][0])));
  if(st.lens!=null)L.push("Lens I explored: "+LN[st.lens]);
- if(st.iv!=null){const t=sim.last;L.push("Intervention I tried in the simulator: "+IV[st.iv][0]+" in “"+SC[st.sc][0]+"”")}
+ if(st.iv!=null){const t=sim.last;L.push("Response I tried in the simulator: "+IV[st.iv][0]+" in “"+SC[st.sc][0]+"”")}
  if(st.sol!=null)L.push("Solution we have been considering: "+SO[st.sol][0]);
  const q=[...document.querySelectorAll("#chk input:checked")].map(x=>"- "+QS[x.dataset.i]);
  if(q.length)L.push("Questions worth looking at:\n"+q.join("\n"));
