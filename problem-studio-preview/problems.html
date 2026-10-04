@@ -5,6 +5,7 @@
     <a href="problems.html">Problems</a>
     <a href="diagnostic.html">Diagnostic</a>
     <a href="insights.html">Insights</a>
+    <a href="glossary.html">Glossary</a>
     <a href="how-we-work.html">How we work</a>
     <a class="navcta" href="contact.html">Bring us the problem</a>
   </nav>
@@ -22,7 +23,7 @@
 <footer class="footer">
   <div class="wrap footgrid">
     <div><strong>Lillith Problem Studio</strong><p>Independent problem-solving for complex, cross-functional problems.</p></div>
-    <div><a href="problems.html">Problems</a><a href="diagnostic.html">Diagnostic</a><a href="insights.html">Insights</a><a href="how-we-work.html">How we work</a><a href="contact.html">Contact</a></div>
+    <div><a href="problems.html">Problems</a><a href="diagnostic.html">Diagnostic</a><a href="insights.html">Insights</a><a href="glossary.html">Glossary</a><a href="how-we-work.html">How we work</a><a href="contact.html">Contact</a></div>
     <div><a href="terms.html">Website terms</a><a href="privacy.html">Privacy</a></div>
   </div>
   <div class="wrap legal">Lillith Problem Studio · Trading structure and legal entity details to be verified before production launch.</div>
@@ -39,4 +40,4 @@ function render(){
  count.textContent=n+' '+(n===1?'pattern':'patterns');
 }
 filters.onclick=e=>{const b=e.target.closest('.filter');if(!b)return;active=b.dataset.c;[...filters.children].forEach(x=>x.setAttribute('aria-pressed',x===b));render()};search.oninput=render;render();
-</script></body></html>
+</script><script src="glossary.js"></script></body></html>
