@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bring Us the Problem — Lillith Problem Studio</title><meta name="description" content="Tell Lillith Problem Studio what is happening."><link rel="stylesheet" href="page.css"></head><body>
+<header class="topbar">
+  <a class="wordmark" href="index.html"><span></span>Lillith <b>Problem Studio</b></a>
+  <nav>
+    <a href="problems.html">Problems</a>
+    <a href="diagnostic.html">Diagnostic</a>
+    <a href="insights.html">Insights</a>
+    <a href="how-we-work.html">How we work</a>
+    <a class="navcta" href="contact.html">Bring us the problem</a>
+  </nav>
+</header>
+<main>
+<section class="hero"><div class="wrap"><div class="micro">Bring us the problem</div><h1 class="display">Tell us what is<br><em>actually happening.</em></h1><p class="lead">You do not need to diagnose it first.</p><p class="intro">A short description is enough to start. We will determine whether we are the right people to investigate it and what we would need to understand next.</p></div></section>
+<section class="section"><div class="wrap">
+<p class="note">Please leave out confidential, legally privileged, commercially sensitive or personal employee information at this stage. We can put appropriate confidentiality arrangements in place before receiving detailed material.</p>
+<form class="form" id="contactForm" novalidate>
+<label><span>Name</span><input name="name" autocomplete="name" required></label>
+<label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+<label><span>Company</span><input name="company" autocomplete="organization" required></label>
+<label><span>Role</span><input name="role"></label>
+<label class="full"><span>What is happening?</span><textarea name="happening" rows="6" required></textarea></label>
+<label class="full"><span>What have you tried already?</span><textarea name="tried" rows="4"></textarea></label>
+<label class="full"><span>What happens if nothing changes?</span><textarea name="consequence" rows="3"></textarea></label>
+<label class="full"><span>Are you open to the possibility that the cause may sit somewhere different from where it first appears?</span><select name="open"><option>Yes</option><option>Probably</option><option>That is why I am here</option></select></label>
+<div class="full"><button class="btn primary" type="submit">Send the problem</button><p id="status" class="micro" style="margin-top:14px"></p></div>
+</form></div></section>
+</main>
+<footer class="footer">
+  <div class="wrap footgrid">
+    <div><strong>Lillith Problem Studio</strong><p>Independent problem-solving for complex, cross-functional problems.</p></div>
+    <div><a href="problems.html">Problems</a><a href="diagnostic.html">Diagnostic</a><a href="insights.html">Insights</a><a href="how-we-work.html">How we work</a><a href="contact.html">Contact</a></div>
+    <div><a href="terms.html">Website terms</a><a href="privacy.html">Privacy</a></div>
+  </div>
+  <div class="wrap legal">Lillith Problem Studio · Trading structure and legal entity details to be verified before production launch.</div>
+</footer>
+<script>const f=document.getElementById('contactForm'),s=document.getElementById('status');f.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(f),email=String(d.get('email')||'').trim();if(!String(d.get('name')||'').trim()||!String(d.get('company')||'').trim()||!String(d.get('happening')||'').trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){s.textContent='Please complete the required fields and check the email address.';return}s.textContent='Preview mode: the form is valid, but it is not connected to the CRM yet.'});</script></body></html>
