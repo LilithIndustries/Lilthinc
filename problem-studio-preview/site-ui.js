@@ -78,6 +78,16 @@
   }
   button.addEventListener('click',()=>panel.hidden?openMenu():closeMenu());
   mobileNav.addEventListener('click',e=>{if(e.target.closest('a')) closeMenu(false)});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden) closeMenu()});
+  document.addEventListener('keydown',e=>{
+    if(panel.hidden) return;
+    if(e.key==='Escape'){ closeMenu(); return; }
+    if(e.key==='Tab'){
+      const focusable=[...panel.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+      if(!focusable.length) return;
+      const first=focusable[0], last=focusable[focusable.length-1];
+      if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
   window.addEventListener('resize',()=>{if(innerWidth>980) closeMenu(false)});
 })();
