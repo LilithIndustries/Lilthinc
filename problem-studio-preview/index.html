@@ -128,7 +128,7 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
 .display-line--indent{margin-left:22vw}
 .hero-bottom{display:grid;grid-template-columns:minmax(280px,600px) 1fr;gap:42px;align-items:end;margin-top:28px}
 .hero-summary{font-size:1.02rem;line-height:1.65;color:var(--charcoal);margin:0}.hero-actions{display:flex;gap:20px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
-.hero-side-note{position:absolute;right:28px;top:92px;max-width:330px;padding:11px 13px;border:1px solid rgba(83,110,114,.34);background:rgba(248,247,243,.84);backdrop-filter:blur(12px);font-family:var(--mono);font-size:.59rem;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:flex;gap:9px;align-items:flex-start;z-index:6;box-shadow:0 10px 30px rgba(10,20,38,.05)}.hero-side-note span{width:8px;height:8px;flex:0 0 auto;margin-top:3px;border-radius:50%;background:var(--accent);animation:pulse 2.4s infinite}@keyframes pulse{50%{opacity:.25}}
+.hero-side-note{position:absolute;right:28px;top:92px;max-width:330px;padding:11px 13px;border:1px solid rgba(83,110,114,.34);background:rgba(248,247,243,.84);backdrop-filter:blur(12px);font-family:var(--mono);font-size:.59rem;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:flex;gap:9px;align-items:flex-start;z-index:6;box-shadow:0 10px 30px rgba(10,20,38,.05)}.hero-side-note>span:first-child{width:8px;height:8px;flex:0 0 auto;margin-top:3px;border-radius:50%;background:var(--accent);animation:pulse 2.4s infinite}.hero-side-note .guide-copy{width:auto;height:auto;margin:0;border-radius:0;background:none;animation:none}.mobile-instruction{display:none}@keyframes pulse{50%{opacity:.25}}
 
 .reality-section{background:var(--paper)}
 .reality-layout{display:grid;grid-template-columns:1.1fr .8fr;gap:8vw;align-items:end}.reality-heading h2{font-size:clamp(3rem,6vw,6.4rem);line-height:.94;letter-spacing:-.055em;margin:26px 0 0}.reality-heading h2 em{font-family:var(--serif);font-weight:400;color:var(--graphite)}.reality-copy{max-width:520px}.reality-copy p:not(.lede){color:var(--graphite);line-height:1.75}
@@ -178,6 +178,7 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
   .engagement-head{align-items:flex-start;flex-direction:column}.case-meta{text-align:left}
   .offer-copy,.human-copy{padding-top:0}.footer-grid{grid-template-columns:1fr 1fr}.footer-grid>div:first-child{grid-column:1/-1}
 }
+@media (hover:none), (pointer:coarse){.desktop-instruction{display:none}.mobile-instruction{display:inline}}
 @media(max-width:680px){
   :root{--shell:min(100% - 32px,1280px)}
   .site-header{padding-inline:16px}.brand{font-size:.7rem}.nav-cta{padding:10px 12px;font-size:.6rem}
@@ -269,7 +270,7 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
           </div>
         </div>
 
-        <div class="hero-side-note" id="heroGuide"><span></span><span class="guide-copy"><strong>Interactive.</strong> Move your cursor across the map to reveal the second view. On touch, tap or drag. Scroll to zoom out.</span></div>
+        <div class="hero-side-note" id="heroGuide"><span></span><span class="guide-copy"><span class="desktop-instruction"><strong>Interactive.</strong> Move your cursor across the map to reveal the second view. Scroll to zoom out.</span><span class="mobile-instruction"><strong>Interactive.</strong> Tap or drag across the map to reveal the second view. Swipe up to zoom out.</span></span></div>
       </div>
     </section>
 
