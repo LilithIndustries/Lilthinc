@@ -65,3 +65,7 @@ repeating-linear-gradient(0deg,transparent 0 44px,rgba(12,13,16,.028) 44px 45px)
 .glossary-entry:target{background:linear-gradient(90deg,rgba(83,110,114,.08),transparent);box-shadow:inset 3px 0 0 var(--accent);padding-left:16px}
 .glossary-empty{padding:50px 0}
 @media(max-width:760px){.glossary-grid{grid-template-columns:1fr}.glossary-index a{width:34px;height:34px}}
+
+/* Device-appropriate interaction guidance */
+.touch-copy{display:none}
+@media (hover:none), (pointer:coarse){.mouse-copy{display:none}.touch-copy{display:inline}}
