@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick Problem Diagnostic — Lillith Problem Studio</title>
+<style>
+:root{--bg:#f3f1ec;--fog:#e4e2dc;--silver:#b4b3ae;--graph:#4f5156;--ink:#0d0e11;--blue:#14213d;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Charter,Georgia,serif;--sans:"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+.w{max-width:1080px;margin:0 auto;padding:0 22px}
+section{border-top:1px solid var(--ink);padding:72px 0}
+.mk{font:600 11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--graph)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(2.8rem,9vw,6.4rem);line-height:.98;margin:18px 0 22px;max-width:11ch}
+h2{font-size:clamp(1.9rem,4.6vw,3.2rem);line-height:1.08;margin:10px 0 14px;max-width:20ch}
+h3{font-size:1.3rem;line-height:1.2}
+.lead{font:italic 1.35rem/1.4 var(--serif);max-width:30ch;margin:0}
+p{margin:0 0 12px}.sub{color:var(--graph);max-width:58ch}
+.hero{padding:56px 0 64px;border:0}
+.four{display:grid;grid-template-columns:repeat(4,1fr);margin-top:48px;border-top:1px solid var(--ink)}
+.four div{padding:14px 16px 0 0}.four div+div{padding-left:16px;border-left:1px solid var(--silver)}
+.four b{display:block;font:600 11px var(--mono);letter-spacing:.12em;margin-bottom:6px}
+.four span{font-size:14px;color:var(--graph);display:block}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.sym{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:28px}
+.sym button,.opt{background:none;border:0;border-bottom:1px solid var(--silver);text-align:left;padding:13px 10px 13px 14px;border-left:3px solid transparent;transition:background .2s}
+.sym button:hover,.opt:hover{background:var(--fog)}
+[aria-pressed=true]{border-left-color:var(--blue)!important;background:var(--fog)!important;font-weight:600}
+.mech{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:30px;border-top:1px solid var(--ink)}
+.mech article{padding:16px 16px 8px 0}.mech article+article{padding-left:16px;border-left:1px solid var(--silver)}
+.mech h3{margin:6px 0 8px}.mech p{font-size:15px;color:var(--graph)}
+.lk{background:none;border:0;border-bottom:1px solid var(--blue);padding:0;font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.pull{font:italic 1.5rem/1.3 var(--serif);margin:26px 0 6px;max-width:34ch}
+.map{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:start;margin-top:20px}
+svg text{font-family:var(--sans)}
+.edge{stroke:var(--silver);stroke-width:1;fill:none;transition:stroke .3s}
+.edge.on{stroke:var(--blue);stroke-width:1.8;stroke-dasharray:6 5;animation:fl 1.4s linear infinite}
+@keyframes fl{to{stroke-dashoffset:-22}}
+.nd{cursor:pointer}.nd circle.c{fill:var(--bg);stroke:var(--ink);stroke-width:1.5;transition:all .25s}
+.nd.rel circle.c{stroke:var(--blue);stroke-width:2.5}
+.nd.sel circle.c{fill:var(--blue)}.nd text{font-size:25px;fill:var(--ink)}
+.nd:focus,.nd:focus-visible{outline:none}.nd:focus-visible circle.c{stroke-width:4;stroke:var(--blue)}
+.panel{border-top:1px solid var(--ink);padding-top:14px;min-height:300px}
+.panel dt{font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--graph);margin-top:16px}
+.panel dd{margin:3px 0 0;font-size:15.5px}
+.sim{margin-top:26px}.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 22px}
+.chip{border:1px solid var(--ink);background:none;border-radius:0;padding:8px 12px;font-size:14px}
+.chip[aria-pressed=true]{background:var(--ink)!important;color:var(--bg);border-color:var(--ink)!important;font-weight:400}
+.bars{margin:18px 0}.br{display:grid;grid-template-columns:96px 1fr 44px;gap:12px;align-items:center;margin:9px 0;font-size:14px}
+.tr{position:relative;height:18px;background:var(--fog)}
+.fl{position:absolute;inset:0 auto 0 0;background:var(--silver);transition:width .7s}
+.fl.lim{background:var(--ink)}.bf{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--blue)}
+.br small{font:11px var(--mono);color:var(--graph)}
+.res{border-top:1px solid var(--ink);padding-top:14px}
+.tag{display:inline-block;font:600 11px var(--mono);letter-spacing:.12em;border:1px solid var(--blue);color:var(--blue);padding:3px 8px;margin-bottom:8px}
+.note{font:12px/1.5 var(--mono);color:var(--graph);border-left:2px solid var(--silver);padding-left:10px;margin:14px 0}
+.q{border-left:1px solid var(--silver);padding:2px 0 2px 16px;margin:10px 0}.q b{display:block;font-weight:600}
+.q i{color:var(--graph);font-style:normal}
+.nx{background:var(--ink);color:var(--bg);border:0;padding:10px 16px;font-size:15px;margin-top:8px}
+.nx:hover{background:var(--blue)}
+.find{border-top:1px solid var(--ink);margin-top:22px;padding-top:14px;max-width:62ch}
+.chk{list-style:none;padding:0;margin:26px 0 0;columns:2;column-gap:44px}
+.chk li{break-inside:avoid;border-bottom:1px solid var(--silver)}
+.chk label{display:flex;gap:12px;padding:12px 0;cursor:pointer;font-size:15.5px}
+.chk input{accent-color:var(--blue);width:18px;height:18px;margin-top:3px;flex:none}
+.close h2{max-width:22ch}.big{font:1.9rem/1.2 var(--serif);margin:26px 0}
+.cta{background:var(--ink);color:var(--bg);border:0;padding:16px 28px;font-size:17px;text-decoration:none;display:inline-block}
+.cta:hover{background:var(--blue)}
+textarea{width:100%;min-height:150px;background:transparent;border:1px solid var(--ink);padding:12px;font:13px/1.5 var(--mono);color:var(--ink);resize:vertical}
+.ghost{background:none;border:1px solid var(--ink);padding:10px 16px;margin-top:10px}
+.ghost:hover{background:var(--fog)}
+footer{border-top:1px solid var(--ink);padding:20px 0 40px}
+@media(max-width:860px){.four,.mech{grid-template-columns:1fr 1fr}.four div:nth-child(3){border-left:0;padding-left:0}.mech article:nth-child(odd){padding-left:0;border-left:0}
+.map{grid-template-columns:1fr}.sym{grid-template-columns:1fr}.chk{columns:1}section{padding:52px 0}}
+@media(max-width:520px){.four,.mech{grid-template-columns:1fr}.four div,.mech article{border-left:0!important;padding-left:0!important}.br{grid-template-columns:80px 1fr 38px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body><div class="w" style="padding-top:20px"><a href="index.html" class="mk" style="text-decoration:none">← Lillith Problem Studio</a></div>
+<header class="w hero">
+<div class="mk">Lillith Problem Studio · Quick diagnostic</div>
+<h1>Start with what you can see</h1>
+<p class="lead">A quick way to separate what is happening from what may be causing it.</p>
+<div class="four" role="list">
+<div role="listitem"><b>WHAT YOU SEE</b><span>What is happening or being experienced.</span></div>
+<div role="listitem"><b>POSSIBLE CAUSE</b><span>What could be creating it.</span></div>
+<div role="listitem"><b>WHAT IS HOLDING THINGS UP</b><span>What currently limits the outcome.</span></div>
+<div role="listitem"><b>WHAT YOU MIGHT CHANGE</b><span>The response someone is considering.</span></div>
+</div>
+<p class="sub" style="margin-top:26px">This tool helps organise the question. It does not diagnose your business, and nothing here is scored.</p>
+</header>
+
+<section id="p1"><div class="w">
+<div class="mk">Part 1 · What you can see</div>
+<h2>What are you seeing?</h2>
+<p class="sub">Choose what is being experienced first. Leave the proposed solution aside for a moment.</p>
+<div class="sym" id="sym"></div>
+<div id="mechOut" aria-live="polite"></div>
+</div></section>
+
+<section id="p2"><div class="w">
+<div class="mk">Part 2 · What could be causing it</div>
+<h2>Seven places worth looking</h2>
+<p class="sub">These are not stages, levels or scores. Each lens is a place to look, and every one of them touches the others. A problem may sit in one lens or in several at once.</p>
+<div class="map">
+<svg id="svg" viewBox="0 10 680 540" role="group" aria-label="System map of seven interconnected lenses. Select a lens to read about it."></svg>
+<div class="panel" id="lensOut" aria-live="polite"></div>
+</div>
+</div></section>
+
+<section id="p3"><div class="w">
+<div class="mk">Part 3 · What is holding things up</div>
+<h2>What changes when the response matches the real limit?</h2>
+<p class="sub">Pick a situation, then try a response. The same response can help in one situation and do very little in another. The difference is what is actually limiting the outcome.</p>
+<div class="mk sim">1 · Situation</div><div class="row" id="scen"></div>
+<div class="mk">2 · Intervention</div><div class="row" id="ivs"></div>
+<div id="scDesc" class="sub"></div>
+<div class="bars" id="bars"></div>
+<div class="res" id="res" aria-live="polite"></div>
+<p class="note">Illustrative systems model — not a forecast or business diagnosis. Capacities are example assumptions in arbitrary units per week; the “output” of the system is simply its most limited stage. Effect sizes are invented to show the logic, and real effects depend on how well an intervention is carried out. <span style="white-space:nowrap">Blue tick = before.</span></p>
+</div></section>
+
+<section id="p4"><div class="w">
+<div class="mk">Part 4 · What are you thinking of changing?</div>
+<h2>Sometimes the solution arrives before the problem is clear</h2>
+<p class="sub">Choose something people commonly arrive with, then keep asking questions. The examples are illustrative, and they do not all end the same way.</p>
+<div class="row" id="sol"></div>
+<div id="solOut" aria-live="polite"></div>
+</div></section>
+
+<section id="p5"><div class="w">
+<div class="mk">Self-test · for thought, not for scoring</div>
+<h2>Questions worth asking</h2>
+<ul class="chk" id="chk"></ul>
+<p class="note">Nothing is calculated. A ticked question is simply somewhere worth looking.</p>
+</div></section>
+
+<section class="close" id="contact"><div class="w">
+<p class="big" style="margin-top:0">You may already know what hurts.<br>The harder question is what is producing it.</p>
+<h2>Bring us the symptom. We’ll investigate the system around it.</h2>
+<a class="cta" href="#contact-box">Bring us a problem</a>
+<div id="contact-box" style="margin-top:56px;max-width:640px">
+<div class="mk">Your path through this page</div>
+<p class="sub" style="margin-top:8px">A plain-text record of what you selected, to paste into whatever message you send. It is not a diagnosis.</p>
+<textarea id="notes" readonly aria-label="Summary of your selections"></textarea><br>
+<button class="ghost" id="copy">Copy summary</button> <span id="cp" class="mk" role="status"></span>
+<p class="note">[Contact details to be added: no email address or booking link has been supplied for this page.]</p>
+</div>
+</div></section>
+<footer><div class="w mk">Lillith Problem Studio · This tool supports thinking; it does not diagnose a business. · <a href="index.html">Home</a> · <a href="terms.html">Website terms</a></div></footer>
+
+<script>
+const $=s=>document.querySelector(s),st={sym:null,lens:null,sc:0,iv:null,sol:null,steps:{}};
+const LN=["Demand & priorities","Decisions & ownership","Work & flow","Information & handoffs","Capacity & capability","Quality & controls","Feedback & learning"];
+
+/* ---------- Part 1 ---------- */
+const SY=[
+["We’re growing, but everything feels harder",[[4,"Capacity","Growth may have outrun available time, skill or attention, even while revenue looks healthy."],[3,"Information","What once lived in a few heads now crosses more people, and context leaks at every crossing."],[1,"Decisions","Choices that took one conversation now need several people, with no clear owner."],[2,"Work design","Habits that suited a small team may create loops and exceptions at larger scale."]]],
+["My team is overwhelmed",[[4,"Capacity","There may genuinely be more work than available capacity."],[2,"Flow","People may have enough theoretical capacity, but work spends too much time waiting, being clarified, switching context or being redone."],[1,"Decisions","Work may stall because authority, priorities or approval paths are unclear."],[0,"Work design","People may repeatedly perform unnecessary, duplicated or poorly designed work."]]],
+["Projects keep slipping",[[0,"Priorities","Too much may be started at once, so everything finishes later than any single thing would."],[3,"Scope & context","Requirements may be unclear or change midway, so the plan was never about the real work."],[2,"Dependencies","Work may wait on other people or teams whose timing nobody coordinates."],[6,"Feedback","Estimates may be repeatedly optimistic because slippage is seen late and never fed back."]]],
+["Too much still comes through me",[[1,"Decisions","Authority may never have been clearly handed over, so people check with you to be safe."],[3,"Information","Others may lack the context to decide without you, even if they could."],[4,"Capability","The skill or confidence to take over may not yet exist, which is a different problem from authority."],[5,"Risk","Mistakes may be costly enough that you rationally remain the final check."]]],
+["Customers are dropping off",[[2,"Experience","Delivery may be inconsistent, or customers may fall into gaps between steps."],[5,"Quality","Errors or broken promises may be driving people away."],[0,"Fit","The offer or promise may attract customers it is not designed to serve well."],[6,"Feedback","The organisation may simply not know why people leave, so it is guessing."]]],
+["Sales have slowed or become inconsistent",[[0,"Demand","The offer, audience or timing may have changed, so fewer of the right people arrive."],[2,"Flow","Enquiries may arrive but wait too long for a response or follow-up."],[4,"Capacity","The people who sell may be pulled into delivery, so selling happens in bursts."],[6,"Feedback","Why deals are won or lost may not be captured, so patterns stay invisible."]]],
+["We keep fixing the same problems",[[6,"Learning","Fixes may treat the visible instance while nothing records or changes the cause."],[1,"Ownership","Nobody may own the underlying problem, only the daily firefight."],[5,"Controls","Nothing may check whether a fix actually held."],[2,"Work design","The process producing the problem may be unchanged, so it simply regenerates."]]],
+["Work constantly gets stuck waiting",[[1,"Decisions","Work may be waiting on approvals or an owner nobody has named."],[3,"Clarification","Work may wait for answers that nobody has the information to give quickly."],[4,"Scarce capability","One person or team may be the only route for a certain kind of work."],[0,"Work in progress","So much may be open at once that each item queues behind the others."]]],
+["Mistakes and rework keep appearing",[[3,"Handoffs","Context may be lost or mistranslated as work passes between people or systems."],[5,"Checks","Checks may happen late, after errors have already been built on."],[4,"Capability","People may be asked to do work that needs skills they have not had a chance to build."],[0,"Priorities","Constantly changing priorities may be forcing rushed, half-informed work."]]],
+["Things work, but only because certain people hold everything together",[[3,"Knowledge","How things work may be undocumented and live in a few heads."],[4,"Concentration","Critical capability may sit with too few people, who compensate for gaps."],[2,"Workarounds","The work itself may be designed so that it only functions with heroic effort."],[1,"Ownership","Responsibility may be informal, so it falls to whoever cares most."]]]];
+$("#sym").innerHTML=SY.map((s,i)=>`<button aria-pressed="false" data-i="${i}">${s[0]}</button>`).join("");
+$("#sym").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.sym=+b.dataset.i;
+ [...$("#sym").children].forEach(x=>x.setAttribute("aria-pressed",x===b));
+ $("#mechOut").innerHTML=`<div class="mk" style="margin-top:34px">Possible mechanisms · hypotheses to investigate</div><div class="mech">`+SY[st.sym][1].map(m=>`<article><button class="lk" data-l="${m[0]}">${LN[m[0]]}</button><h3>${m[1]}</h3><p>${m[2]}</p></article>`).join("")+`</div><p class="pull">Same symptom. Different possible causes. Different appropriate responses.</p><p class="sub">These are hypotheses, not diagnoses. Which one applies, if any, is a question for investigation, and more than one may be true at once. Each links to a lens in the map below.</p>`;notes()};
+$("#mechOut").onclick=e=>{const b=e.target.closest(".lk");if(b){pickLens(+b.dataset.l);$("#p2").scrollIntoView()}};
+
+/* ---------- Part 2 ---------- */
+const LD=[
+["What enters the system, how much arrives at once, and how the organisation chooses what comes first.","Everything marked urgent, work started faster than it finishes, priorities that change weekly, requests that bypass any queue, unclear which work or customers are actually wanted.","Overwhelmed teams, slipping projects, rework from rushed starts, work waiting, inconsistent sales.","Poor discipline, weak effort or too little capacity.","Where requests originate, how priorities are set and changed, how much is in progress at once, and what happens to work nobody ranks."],
+["Who has authority to act, what information they require, when escalation is necessary and when a decision is considered settled.","Unclear ownership, repeated approvals, decisions being reopened, unnecessary escalation, work waiting for one person.","Slow delivery, excessive meetings, founder overload, rework, frustrated staff.","Low productivity or insufficient headcount.","Decision rights, escalation paths, information availability, authority boundaries, risk thresholds and recurring decision queues."],
+["How work really travels from request to finished outcome: the steps, queues, loops and interruptions, and the time spent waiting rather than being worked.","Work idling between steps, constant context switching, loops back for clarification, half-finished items piling up, exceptions handled by hand.","Late delivery, tired teams, customers chasing, quality dips as people hurry to catch up.","Slow people, or a need for more people.","The route work actually takes (not the documented one), where it queues, how often it goes backwards, and how much elapsed time is active effort."],
+["How context moves between people, roles, teams and systems, and what each person needs to know for work to proceed correctly.","Details re-typed across systems, requirements translated twice, knowledge held in one inbox or head, “I thought you had that”.","Errors, rework, customer confusion, status meetings, dependence on particular people.","Carelessness or a poor attitude to detail.","Each handoff: what is passed, in what form, what is lost, who checks, and where the same information is entered more than once."],
+["Whether there is enough time, skill, attention, resource and specialist capability for the work being asked of the organisation.","Specialists as single points of supply, people spread across too many roles, skills lagging what is being sold, no slack for the unplanned.","Waiting for particular people, slipping dates, quality dips, burnout, leaders doing work below their level.","Poor process or low motivation, though a real shortage is also entirely possible.","Load against genuinely available time, where specific skills are scarce, what absorbs attention, and whether the gap is volume or capability."],
+["How errors, risk, standards, checks and exceptions are handled, and how much checking the work genuinely needs.","Checks that happen too late, controls added after every mistake, no agreed definition of done, exceptions decided case by case, review queues.","Slow approvals, rework, anxious managers staying involved, customer complaints.","Perfectionism or lack of trust, or, the reverse, slackness.","Where errors originate versus where they are found, what each check protects against, which controls nobody can explain, and how exceptions get decided."],
+["How the organisation finds out what worked, what failed and what needs to change, and whether that knowledge alters anything.","Problems discussed but not recorded, measures that arrive late or count the wrong thing, fixes never checked, lessons living with individuals.","The same problems recurring, surprise customer losses, decisions made on stale assumptions.","Bad luck, or a run of unrelated problems.","What is measured and who sees it, how long before a failure becomes visible, who is responsible for acting, and whether past fixes were ever checked."]];
+const ED=[[0,1],[0,2],[0,4],[0,6],[1,2],[1,3],[1,5],[1,6],[2,3],[2,4],[2,5],[3,5],[3,6],[3,4],[4,5],[5,6]];
+const cx=340,cy=290,P=LN.map((_,i)=>{const a=(-90+i*360/7)*Math.PI/180;return[cx+195*Math.cos(a),cy+185*Math.sin(a)]});
+let sv=ED.map((e,i)=>`<path class="edge" id="e${i}" d="M${P[e[0]]}L${P[e[1]]}"/>`).join("");
+sv+=P.map((p,i)=>{const[x,y]=p,sp=LN[i].split(" & "),side=Math.abs(x-cx)>20,an=side?(x<cx?"end":"start"):"middle",tx=side?x+(x<cx?-22:22):x,
+ ys=side?[y-3,y+24]:(y<cy?[y-50,y-23]:[y+38,y+65]);
+ return`<g class="nd" id="n${i}" tabindex="0" role="button" aria-pressed="false" aria-label="${LN[i]}" data-i="${i}"><circle r="34" fill="transparent" cx="${x}" cy="${y}"/><circle class="c" r="12" cx="${x}" cy="${y}"/><text text-anchor="${an}" x="${tx}" y="${ys[0]}">${sp[0]}${sp[1]?" &amp;":""}</text>${sp[1]?`<text text-anchor="${an}" x="${tx}" y="${ys[1]}">${sp[1]}</text>`:""}</g>`}).join("");
+$("#svg").innerHTML=sv;
+function pickLens(i){st.lens=i;const rel=new Set();
+ ED.forEach((e,k)=>{const on=e.includes(i);$("#e"+k).classList.toggle("on",on);if(on)e.forEach(v=>rel.add(v))});
+ LN.forEach((_,k)=>{const n=$("#n"+k);n.classList.toggle("sel",k===i);n.classList.toggle("rel",rel.has(k)&&k!==i);n.setAttribute("aria-pressed",k===i)});
+ const d=LD[i],f=["What happens here","Common friction","What may appear elsewhere","Sometimes mistaken for","What we would investigate"];
+ $("#lensOut").innerHTML=`<h3>${LN[i]}</h3><dl style="margin:0">`+d.map((t,k)=>`<dt>${f[k]}</dt><dd>${t}</dd>`).join("")+`</dl><p class="note" style="margin-top:18px">Connected here: ${[...rel].filter(k=>k!==i).map(k=>LN[k]).join(" · ")}. Connection means effects travel in both directions, not that one follows another.</p>`;notes()}
+$("#svg").onclick=e=>{const n=e.target.closest(".nd");if(n)pickLens(+n.dataset.i)};
+$("#svg").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){const n=e.target.closest(".nd");if(n){e.preventDefault();pickLens(+n.dataset.i)}}};
+$("#lensOut").innerHTML=`<p class="sub">Select any lens on the map to see what it governs, how it tends to go wrong, and what it can look like from somewhere else.</p>`;
+
+/* ---------- Part 3 ---------- */
+const ST=["Demand","Decisions","Work","Handoffs","Quality"];
+const SC=[
+["Sales demand is below delivery capacity",[6,12,10,12,11],"Delivery could take on more than is arriving. Work is mostly waiting for customers, not the other way round."],
+["Delivery is already operating at its effective limit",[8,12,6,10,9],"Enquiries arrive faster than the team can complete work. Decisions and checks are keeping up."],
+["Work waits on a few people to decide",[10,5,10,9,9],"People are available and work arrives, but progress queues behind approvals."],
+["Information is re-keyed and lost between steps",[10,10,9,5,9],"Individual steps are quick; the cost is in moving context from one to the next."],
+["Errors are found late and fixed repeatedly",[9,10,8,9,5],"Output is produced but much of it returns for correction, consuming the capacity that made it."]];
+const IV=[
+["Hire another person","Adds hands to the work itself.",[[2,1.4]]],
+["Generate more leads","Increases what arrives.",[[0,1.5]]],
+["Introduce automation","Takes repetitive steps and re-keying off people.",[[2,1.3],[3,1.2]]],
+["Buy new software","Changes how information is held and shared.",[[3,1.5]]],
+["Add management capacity","Adds coordination and decision bandwidth.",[[1,1.4]]],
+["Redesign the workflow","Changes how work and information move.",[[2,1.3],[3,1.3]]],
+["Clarify decision authority","Settles who decides what.",[[1,1.6]]],
+["Remove unnecessary work","Stops work that adds nothing.",[[2,1.4]]],
+["Increase specialist capability","Raises skill where errors or complexity arise.",[[4,1.5]]]];
+$("#scen").innerHTML=SC.map((s,i)=>`<button class="chip" aria-pressed="${i==0}" data-i="${i}">${s[0]}</button>`).join("");
+$("#ivs").innerHTML=IV.map((s,i)=>`<button class="chip" aria-pressed="false" data-i="${i}" title="${s[1]}">${s[0]}</button>`).join("");
+$("#scen").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.sc=+b.dataset.i;[...$("#scen").children].forEach(x=>x.setAttribute("aria-pressed",x===b));sim()};
+$("#ivs").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.iv=+b.dataset.i;[...$("#ivs").children].forEach(x=>x.setAttribute("aria-pressed",x===b));sim()};
+const mn=a=>{let k=0;a.forEach((v,i)=>{if(v<a[k]-1e-9)k=i});return k},r1=n=>Math.round(n*10)/10;
+function sim(){const sc=SC[st.sc],c0=sc[1],i0=mn(c0),t0=c0[i0],iv=st.iv==null?null:IV[st.iv];
+ let c1=c0.slice();if(iv)iv[2].forEach(([i,m])=>c1[i]=c0[i]*m);
+ const i1=mn(c1),t1=c1[i1],R=iv?iv[2].map(x=>x[0]):[];
+ $("#scDesc").textContent=sc[2];
+ $("#bars").innerHTML=ST.map((n,i)=>`<div class="br"><span>${n}</span><div class="tr"><div class="fl ${i==i1?"lim":""}" style="width:${c1[i]/10*66.6}%"></div>${iv&&R.includes(i)?`<div class="bf" style="left:${c0[i]/10*66.6}%" title="before"></div>`:""}</div><small>${r1(c1[i])}</small></div>`).join("")+`<div class="mk" style="margin-top:12px">Darkest bar = current limiting constraint · output = the lowest bar</div>`;
+ let h="";
+ if(!iv)h=`<div class="tag">BEFORE ANY CHANGE</div><p>Output is ${r1(t0)} units a week, limited by <b>${ST[i0]}</b>. Nothing else in the system can deliver more than that until it changes. Now choose an intervention.</p>`;
+ else{const g=t1-t0,nm=iv[0];
+  if(g<.05)h=`<div class="tag">MISMATCHED INTERVENTION</div><p><b>${nm}</b> adds capacity at ${R.map(i=>ST[i]).join(" and ")}, but that was not what limited the system. Output stays at ${r1(t0)}. The constraint is still <b>${ST[i0]}</b>.</p><p>${i0!=0&&R.includes(0)?"Opportunity grows, but nothing more is completed. Work simply queues in front of the limit. ":""}The intervention did what it was meant to do; it just did not touch what was holding the system back.</p><p class="pull" style="font-size:1.2rem">A good intervention applied to the wrong constraint can still produce a poor result.</p>`;
+  else if(!R.includes(i1))h=`<div class="tag">CONSTRAINT SHIFT</div><p><b>${nm}</b> removed the old limit at ${ST[i0]}. Output rises from ${r1(t0)} to ${r1(t1)}, but not as far as it could have, because <b>${ST[i1]}</b> now limits the system.</p><p>The intervention worked. What it revealed is the next thing to investigate.</p><p class="pull" style="font-size:1.2rem">When one constraint is removed, another often becomes visible.</p>`;
+  else{const o=c1.map((v,i)=>[v,i]).filter(x=>!R.includes(x[1])).sort((a,b)=>a[0]-b[0])[0];
+   h=`<div class="tag">MATCHED INTERVENTION</div><p><b>${nm}</b> addressed what was limiting the system. Output rises from ${r1(t0)} to ${r1(t1)}.</p><p>${o&&o[0]-t1<2.6?`The next limit is already close: <b>${ST[o[1]]}</b> at ${r1(o[0])}. Gains beyond this point would need attention there.`:"Other stages have room, so further gains are available before the constraint moves."} Try the same intervention in a different situation.</p>`}}
+ $("#res").innerHTML=h;notes()}
+sim();
+
+/* ---------- Part 4 ---------- */
+const SO=[
+["We need a CRM",[["Why?","Leads are getting lost."],["Where?","After the first conversation."],["What happens then?","Follow-up depends on somebody remembering to do it."],["Who owns follow-up?","Nobody clearly does."]],"An ownership and workflow failure.","A CRM may still become part of the solution. But it is no longer being mistaken for the problem definition."],
+["We need AI",[["Why?","Weekly reporting takes far too long."],["Where does the time go?","Copying figures between three systems and reformatting them."],["Is the logic itself complicated?","No. The steps are the same every time."],["Does anyone check the output?","Yes, one person, and they know what good looks like."]],"A repetitive, rule-based handoff with a clear owner.","Here the investigation supports the request. Automation, including AI, looks like a sound fit. The difference is that it is now aimed at a specific task."],
+["We need another employee",[["Why?","Work keeps piling up."],["Where does it pile up?","In delivery, before the final step."],["Is it waiting on decisions or being redone?","No. Briefs are clear and approvals are quick."],["Are people fully used?","Yes, and overtime has become routine."]],"Genuine delivery capacity shortage.","Investigation confirms the request. Hiring addresses the constraint. The next question is what becomes the limit afterwards."],
+["We need more leads",[["Why?","Sales are inconsistent."],["Where do deals stall?","Enquiries arrive, but replies can take days."],["Why the delay?","Whoever is delivering work answers sales enquiries last."],["Who owns the response?","Nobody in particular."]],"A response and ownership failure, not a shortage of demand.","More leads might still help later. For now they would add to a queue that already goes unanswered."],
+["We need a project manager",[["Why?","Nothing finishes when we say it will."],["What goes wrong?","Teams wait on each other and nobody sees it until the date has passed."],["Does anyone see the whole picture?","No. Each team sees only its own part."],["Who can reprioritise across teams?","Nobody has that authority today."]],"Missing cross-team coordination, with no authority to resolve conflicts.","A project manager may well be the right response, provided the role carries the visibility and authority the investigation says is missing."],
+["We need new software",[["Why?","Our tracking spreadsheet keeps breaking."],["How does it break?","Two people edit at once and version copies diverge."],["Is the underlying process settled?","Yes, everyone follows the same steps."],["Does anyone own the data?","Yes, one named person."]],"A tool that no longer fits a well-understood process.","This is a genuine case for new software. Settled process and clear ownership mean the tool is not being asked to fix something else."],
+["We need more process",[["Why?","People handle the same request differently."],["How differently?","Some check for completeness first, others do not."],["Has anyone said what “good” is?","Not in any agreed way."],["Who decides?","It has never been clear."]],"An undefined standard and unclear ownership.","Process may help once someone decides what the process is for. Written steps would otherwise just preserve today’s disagreement."],
+["We need to restructure",[["Why?","Decisions are too slow."],["Where do they slow?","Two managers both have to approve the same requests."],["Why two?","Each owns a different part of the outcome."],["Can that overlap be settled without changing the structure?","Possibly. Or it may be a structural flaw."]],"Overlapping decision rights, the cause of which is still open.","Restructuring remains a candidate, alongside clarifying authority. The point is that it is now one option for a stated problem."]];
+$("#sol").innerHTML=SO.map((s,i)=>`<button class="chip" aria-pressed="false" data-i="${i}">${s[0]}</button>`).join("");
+$("#sol").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.sol=+b.dataset.i;[...$("#sol").children].forEach(x=>x.setAttribute("aria-pressed",x===b));solv();notes()};
+function solv(){const i=st.sol,s=SO[i],n=st.steps[i]||0;
+ let h=`<div class="mk" style="margin-top:12px">Requested solution</div><p class="big" style="margin:4px 0 14px">${s[0]}.</p>`;
+ for(let k=0;k<n;k++)h+=`<div class="q"><b>${s[1][k][0]}</b><i>${s[1][k][1]}</i></div>`;
+ if(n<4)h+=`<button class="nx" id="nx">Ask: ${s[1][n][0]}</button>`;
+ else h+=`<div class="find"><div class="mk">What the investigation has found</div><h3 style="margin:6px 0 10px">${s[2]}</h3><p>${s[3]}</p><p class="pull" style="font-size:1.25rem">A requested solution is useful evidence. It is not yet a diagnosis.</p></div>`;
+ $("#solOut").innerHTML=h;const b=$("#nx");if(b)b.onclick=()=>{st.steps[i]=n+1;solv();$("#nx")&&$("#nx").focus()}}
+
+/* ---------- Questions & closing ---------- */
+const QS=["Where does work regularly wait for one particular person?","Which problems return after supposedly being fixed?","Which processes work mainly because somebody remembers how they work?","Where is information repeatedly translated, copied or re-entered?","Which decisions are repeatedly reopened?","Where does adding more work create disproportionate strain?","Where are people manually compensating for poor system design?","What stops when one key person is unavailable?","Where do fixes improve one metric while making something else harder?","Which proposed solutions have never had their underlying assumption tested?"];
+$("#chk").innerHTML=QS.map((q,i)=>`<li><label><input type="checkbox" data-i="${i}"><span>${q}</span></label></li>`).join("");
+$("#chk").onchange=notes;
+function notes(){const L=[];
+ L.push("Symptom: "+(st.sym==null?"(not selected)":SY[st.sym][0]));
+ if(st.lens!=null)L.push("Lens I explored: "+LN[st.lens]);
+ if(st.iv!=null){const t=sim.last;L.push("Intervention I tried in the simulator: "+IV[st.iv][0]+" in “"+SC[st.sc][0]+"”")}
+ if(st.sol!=null)L.push("Solution we have been considering: "+SO[st.sol][0]);
+ const q=[...document.querySelectorAll("#chk input:checked")].map(x=>"- "+QS[x.dataset.i]);
+ if(q.length)L.push("Questions worth looking at:\n"+q.join("\n"));
+ $("#notes").value=L.join("\n")}
+$("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#notes").value);$("#cp").textContent="Copied"}catch(e){$("#notes").select();$("#cp").textContent="Press Ctrl/Cmd+C to copy"}};
+notes();
+</script>
+</body>
+</html>
