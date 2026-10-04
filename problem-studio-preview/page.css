@@ -53,3 +53,15 @@ repeating-linear-gradient(90deg,transparent 0 58px,rgba(12,13,16,.035) 58px 59px
 repeating-linear-gradient(0deg,transparent 0 44px,rgba(12,13,16,.028) 44px 45px);mix-blend-mode:multiply}
 .contact-visual::after{content:"DAYLIGHT STRATEGY IMAGE · PREVIEW POSITION";position:absolute;left:18px;bottom:16px;padding:8px 10px;background:rgba(251,250,247,.82);backdrop-filter:blur(8px);font:600 .56rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--graph)}
 @media(max-width:900px){.contact-hero-grid{grid-template-columns:1fr}.contact-visual{min-height:220px}}
+
+/* Glossary */
+.glossary-index{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.glossary-index a{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);text-decoration:none;font:600 .65rem var(--mono);color:var(--graph);background:rgba(255,255,255,.3)}
+.glossary-index a:hover,.glossary-index a:focus-visible{border-color:var(--accent);color:var(--accent);background:rgba(83,110,114,.07)}
+.glossary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 54px;margin-top:34px;border-top:1px solid var(--line)}
+.glossary-entry{padding:28px 0;border-bottom:1px solid var(--line);scroll-margin-top:92px}
+.glossary-entry h2{font-size:1.55rem;margin:0 0 9px;max-width:none;letter-spacing:-.02em}
+.glossary-entry p{margin:0;color:var(--graph);max-width:58ch;line-height:1.65}
+.glossary-entry:target{background:linear-gradient(90deg,rgba(83,110,114,.08),transparent);box-shadow:inset 3px 0 0 var(--accent);padding-left:16px}
+.glossary-empty{padding:50px 0}
+@media(max-width:760px){.glossary-grid{grid-template-columns:1fr}.glossary-index a{width:34px;height:34px}}
