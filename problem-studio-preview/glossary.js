@@ -77,40 +77,47 @@
 
   function processTextNode(node){
     if(!eligible(node)) return;
-    let text=node.nodeValue;
-    let matchTerm=null, match=null, earliest=Infinity;
 
-    for(const term of TERMS){
-      if(linked.has(term.id)) continue;
-      const m=term.re.exec(text);
-      if(m && m.index < earliest){
-        earliest=m.index; matchTerm=term; match=m;
-      }
-    }
-    if(!matchTerm || !match) return;
-
-    const before=text.slice(0,match.index);
-    const found=match[0];
-    const after=text.slice(match.index+found.length);
+    const original=node.nodeValue;
+    let remaining=original;
     const frag=document.createDocumentFragment();
-    if(before) frag.append(document.createTextNode(before));
+    let changed=false;
 
-    const a=document.createElement('a');
-    a.className='glossary-term';
-    a.href='glossary.html#'+matchTerm.id;
-    a.title=matchTerm.def;
-    a.setAttribute('aria-label', found + ': ' + matchTerm.def + ' Open glossary definition.');
-    a.textContent=found;
-    frag.append(a);
-    if(after) frag.append(document.createTextNode(after));
-    node.replaceWith(frag);
-    linked.add(matchTerm.id);
+    while(remaining){
+      let matchTerm=null, match=null, earliest=Infinity;
 
-    // Continue through the text after the new link so another glossary term can be linked.
-    if(after){
-      const tail=frag.lastChild;
-      if(tail && tail.nodeType===Node.TEXT_NODE) processTextNode(tail);
+      for(const term of TERMS){
+        if(linked.has(term.id)) continue;
+        const m=term.re.exec(remaining);
+        if(m && m.index < earliest){
+          earliest=m.index;
+          matchTerm=term;
+          match=m;
+        }
+      }
+
+      if(!matchTerm || !match){
+        frag.append(document.createTextNode(remaining));
+        break;
+      }
+
+      if(match.index>0) frag.append(document.createTextNode(remaining.slice(0,match.index)));
+
+      const found=match[0];
+      const a=document.createElement('a');
+      a.className='glossary-term';
+      a.href='glossary.html#'+matchTerm.id;
+      a.title=matchTerm.def;
+      a.setAttribute('aria-label', found + ': ' + matchTerm.def + ' Open glossary definition.');
+      a.textContent=found;
+      frag.append(a);
+
+      linked.add(matchTerm.id);
+      changed=true;
+      remaining=remaining.slice(match.index+found.length);
     }
+
+    if(changed) node.replaceWith(frag);
   }
 
   function scan(root=document.body){
