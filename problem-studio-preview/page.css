@@ -41,3 +41,15 @@ h1,h2,h3{margin:0;letter-spacing:-.035em;line-height:1}.display{font-size:clamp(
   .btn,.filter,.problem summary,.topbar nav a,.card a{cursor:pointer}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Preview image placements */
+.contact-hero-grid{display:grid;grid-template-columns:1.05fr .85fr;gap:7vw;align-items:end}
+.contact-visual{min-height:300px;border:1px solid var(--line);position:relative;overflow:hidden;background:
+linear-gradient(180deg,rgba(251,250,247,.08),rgba(251,250,247,.28)),
+radial-gradient(55% 90% at 18% 12%,rgba(255,255,255,.88),transparent 70%),
+linear-gradient(135deg,#d7d0c5 0%,#eee7dc 40%,#b8afa4 100%)}
+.contact-visual::before{content:"";position:absolute;inset:0;background:
+repeating-linear-gradient(90deg,transparent 0 58px,rgba(12,13,16,.035) 58px 59px),
+repeating-linear-gradient(0deg,transparent 0 44px,rgba(12,13,16,.028) 44px 45px);mix-blend-mode:multiply}
+.contact-visual::after{content:"DAYLIGHT STRATEGY IMAGE · PREVIEW POSITION";position:absolute;left:18px;bottom:16px;padding:8px 10px;background:rgba(251,250,247,.82);backdrop-filter:blur(8px);font:600 .56rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--graph)}
+@media(max-width:900px){.contact-hero-grid{grid-template-columns:1fr}.contact-visual{min-height:220px}}
