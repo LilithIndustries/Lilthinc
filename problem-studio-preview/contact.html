@@ -27,9 +27,9 @@
     <div class="micro">Bring us the problem</div>
     <h1 class="display">Tell us what is<br><em>actually happening.</em></h1>
     <p class="lead">You do not need to diagnose it first.</p>
-    <p class="intro">A short description is enough to start. We will determine whether we are the right people to investigate it and what we would need to understand next.</p>
+    <p class="intro">A short description is enough to start. We will determine whether we are the right people to investigate it and what we would need to understand next.</p><p class="intro" style="font-size:.9rem">Australian-based studio. Engagements can be run remotely.</p>
   </div>
-  <div class="contact-visual" role="img" aria-label="Preview position for the daylight overhead strategy image"></div>
+  <div class="contact-visual" aria-hidden="true"></div>
 </div></section>
 <section class="section"><div class="wrap">
 <p class="note">Please leave out confidential, legally privileged, commercially sensitive or personal employee information at this stage. We can put appropriate confidentiality arrangements in place before receiving detailed material.</p>
@@ -37,12 +37,12 @@
 <label><span>Name</span><input name="name" autocomplete="name" required></label>
 <label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
 <label><span>Company</span><input name="company" autocomplete="organization" required></label>
-<label><span>Role</span><input name="role"></label>
+<label><span>Role</span><input name="role" autocomplete="organization-title"></label>
 <label class="full"><span>What is happening?</span><textarea name="happening" rows="6" required></textarea></label>
 <label class="full"><span>What have you tried already?</span><textarea name="tried" rows="4"></textarea></label>
 <label class="full"><span>What happens if nothing changes?</span><textarea name="consequence" rows="3"></textarea></label>
 <label class="full"><span>Are you open to the possibility that the cause may sit somewhere different from where it first appears?</span><select name="open"><option>Yes</option><option>Probably</option><option>That is why I am here</option></select></label>
-<div class="full"><button class="btn primary" type="submit">Send the problem</button><p id="status" class="micro" style="margin-top:14px"></p></div>
+<div class="full"><button class="btn primary" type="submit">Send the problem</button><p id="status" class="micro" style="margin-top:14px" role="status" aria-live="polite"></p></div>
 </form></div></section>
 </main>
 <footer class="footer">
