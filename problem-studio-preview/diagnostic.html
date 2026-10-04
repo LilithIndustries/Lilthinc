@@ -5,7 +5,7 @@
 <meta name="description" content="Use a practical interactive diagnostic to separate what you can see from what may be causing it, then identify the evidence worth checking next.">
 <meta name="robots" content="noindex,nofollow">
 <meta property="og:locale" content="en_AU">
-<meta property="og:type" content="website">
+<meta property="og:type" content="website">\n<meta property="og:site_name" content="Lillith Problem Studio">
 <meta property="og:title" content="Business Problem Diagnostic Tool | Lillith Problem Studio">
 <meta property="og:description" content="Use a practical interactive diagnostic to separate what you can see from what may be causing it, then identify the evidence worth checking next.">
 <meta name="twitter:card" content="summary">
@@ -13,12 +13,12 @@
 <meta name="twitter:description" content="Use a practical interactive diagnostic to separate what you can see from what may be causing it, then identify the evidence worth checking next.">
 
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f3f1ec">\n<meta name="color-scheme" content="light">\n<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 :root{--bg:#f3f1ec;--fog:#e4e2dc;--silver:#b4b3ae;--graph:#4f5156;--ink:#0d0e11;--blue:#14213d;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Charter,Georgia,serif;--sans:"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--sans);-webkit-font-smoothing:antialiased}.skip-link{position:fixed;left:14px;top:12px;z-index:2000;transform:translateY(-180%);background:var(--ink);color:var(--bg);padding:10px 14px;text-decoration:none;font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase}.skip-link:focus{transform:none}
 .w{max-width:1080px;margin:0 auto;padding:0 22px}
 section{border-top:1px solid var(--ink);padding:72px 0}
 .mk{font:600 11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--graph)}
@@ -108,12 +108,12 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
-<body><div class="w" style="padding-top:20px;display:flex;gap:18px;flex-wrap:wrap"><a href="index.html" class="mk" style="text-decoration:none">← Lillith Problem Studio</a><a href="glossary.html" class="mk">Glossary ↗</a></div>
-<header class="w hero">
+<body><a class="skip-link" href="#main">Skip to content</a><div class="w" style="padding-top:20px;display:flex;gap:18px;flex-wrap:wrap"><a href="index.html" class="mk" style="text-decoration:none">← Lillith Problem Studio</a><a href="glossary.html" class="mk">Glossary ↗</a></div>
+<main id="main"><header class="w hero">
 <div class="mk">Lillith Problem Studio · Quick diagnostic</div>
 <h1>Start with what you can see</h1>
 <p class="lead">A quick way to separate what is happening from what may be causing it.</p>
-<div class="diagnostic-visual" role="img" aria-label="Preview position for the blue overhead research image"></div>
+<div class="diagnostic-visual" aria-hidden="true"></div>
 <div class="four" role="list">
 <div role="listitem"><b>WHAT YOU SEE</b><span>What is happening or being experienced.</span></div>
 <div role="listitem"><b>POSSIBLE CAUSE</b><span>What could be creating it.</span></div>
@@ -192,7 +192,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <p class="note">[Contact details to be added: no email address or booking link has been supplied for this page.]</p>
 </div>
 </div></section>
-<footer><div class="w mk">Lillith Problem Studio · This tool supports thinking; it does not diagnose a business. · <a href="index.html">Home</a> · <a href="glossary.html">Glossary</a> · <a href="terms.html">Website terms</a></div></footer>
+<footer><div class="w mk">Lillith Problem Studio · This tool supports thinking; it does not diagnose a business. · <a href="index.html">Home</a> · <a href="glossary.html">Glossary</a> · <a href="terms.html">Website terms</a> · <a href="privacy.html">Privacy</a> · <a href="cookies.html">Cookies</a> · <a href="accessibility.html">Accessibility</a> · Australia</div></footer>
 
 <script>
 const $=s=>document.querySelector(s),st={sym:null,customSym:"",lens:null,sc:0,iv:null,sol:null,steps:{}};
@@ -331,5 +331,5 @@ function notes(){const L=[];
 $("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#notes").value);$("#cp").textContent="Copied"}catch(e){$("#notes").select();$("#cp").textContent=window.matchMedia("(hover:none), (pointer:coarse)").matches?"Select the text above and copy it":"Press Ctrl/Cmd+C to copy"}};
 notes();
 </script>
-<script src="glossary.js"></script></body>
+<script src="glossary.js"></script><script src="privacy-consent.js"></script></body>
 </html>
