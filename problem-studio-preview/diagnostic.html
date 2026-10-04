@@ -26,6 +26,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 .sym{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:28px}
 .sym button,.opt{background:none;border:0;border-bottom:1px solid var(--silver);text-align:left;padding:13px 10px 13px 14px;border-left:3px solid transparent;transition:background .2s}
+.custom-sym{margin-top:32px;padding:22px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--silver)}
+.custom-sym label{display:block;margin-bottom:8px}.custom-sym textarea{width:100%;min-height:92px;background:rgba(255,255,255,.28);border:1px solid var(--silver);padding:12px;font:15px/1.5 var(--sans);color:var(--ink);resize:vertical}
+.custom-sym .custom-actions{display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap}.custom-sym .custom-use{background:var(--ink);color:var(--bg);border:0;padding:10px 15px}.custom-sym .custom-help{font-size:13px;color:var(--graph)}
+.custom-path{margin-top:24px;border-left:2px solid var(--blue);padding:4px 0 4px 14px}.custom-path p{margin:6px 0}.custom-path a{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue);text-decoration:none;border-bottom:1px solid var(--blue)}
 .sym button:hover,.opt:hover{background:var(--fog)}
 [aria-pressed=true]{border-left-color:var(--blue)!important;background:var(--fog)!important;font-weight:600}
 .mech{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:30px;border-top:1px solid var(--ink)}
@@ -97,6 +101,14 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <h2>What are you seeing?</h2>
 <p class="sub">Choose what is being experienced first. Leave the proposed solution aside for a moment.</p>
 <div class="sym" id="sym"></div>
+<div class="custom-sym">
+  <label for="customSym"><span class="mk">Something else?</span></label>
+  <textarea id="customSym" maxlength="500" placeholder="Describe what is happening in one or two sentences."></textarea>
+  <div class="custom-actions">
+    <button class="custom-use" id="customUse" type="button">Use my description</button>
+    <span class="custom-help">You do not need to know the cause yet.</span>
+  </div>
+</div>
 <div id="mechOut" aria-live="polite"></div>
 </div></section>
 
@@ -152,7 +164,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <footer><div class="w mk">Lillith Problem Studio · This tool supports thinking; it does not diagnose a business. · <a href="index.html">Home</a> · <a href="terms.html">Website terms</a></div></footer>
 
 <script>
-const $=s=>document.querySelector(s),st={sym:null,lens:null,sc:0,iv:null,sol:null,steps:{}};
+const $=s=>document.querySelector(s),st={sym:null,customSym:"",lens:null,sc:0,iv:null,sol:null,steps:{}};
 const LN=["Demand & priorities","Decisions & ownership","Work & flow","Information & handoffs","Capacity & capability","Quality & controls","Feedback & learning"];
 
 /* ---------- Part 1 ---------- */
@@ -168,10 +180,27 @@ const SY=[
 ["Mistakes and rework keep appearing",[[3,"Handoffs","Context may be lost or mistranslated as work passes between people or systems."],[5,"Checks","Checks may happen late, after errors have already been built on."],[4,"Capability","People may be asked to do work that needs skills they have not had a chance to build."],[0,"Priorities","Constantly changing priorities may be forcing rushed, half-informed work."]]],
 ["Things work, but only because certain people hold everything together",[[3,"Knowledge","How things work may be undocumented and live in a few heads."],[4,"Concentration","Critical capability may sit with too few people, who compensate for gaps."],[2,"Workarounds","The work itself may be designed so that it only functions with heroic effort."],[1,"Ownership","Responsibility may be informal, so it falls to whoever cares most."]]]];
 $("#sym").innerHTML=SY.map((s,i)=>`<button aria-pressed="false" data-i="${i}">${s[0]}</button>`).join("");
-$("#sym").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.sym=+b.dataset.i;
+$("#sym").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.sym=+b.dataset.i;st.customSym="";$("#customSym").value="";
  [...$("#sym").children].forEach(x=>x.setAttribute("aria-pressed",x===b));
- $("#mechOut").innerHTML=`<div class="mk" style="margin-top:34px">Possible mechanisms · hypotheses to investigate</div><div class="mech">`+SY[st.sym][1].map(m=>`<article><button class="lk" data-l="${m[0]}">${LN[m[0]]}</button><h3>${m[1]}</h3><p>${m[2]}</p></article>`).join("")+`</div><p class="pull">Same symptom. Different possible causes. Different appropriate responses.</p><p class="sub">These are hypotheses, not diagnoses. Which one applies, if any, is a question for investigation, and more than one may be true at once. Each links to a lens in the map below.</p>`;notes()};
+ $("#mechOut").innerHTML=`<div class="mk" style="margin-top:34px">Possible causes to investigate</div><div class="mech">`+SY[st.sym][1].map(m=>`<article><button class="lk" data-l="${m[0]}">${LN[m[0]]}</button><h3>${m[1]}</h3><p>${m[2]}</p></article>`).join("")+`</div><p class="pull">Same visible problem. Different possible causes. Different appropriate responses.</p><p class="sub">These are possibilities, not diagnoses. More than one may be true. Each links to an area you can explore below.</p>`;notes()};
 $("#mechOut").onclick=e=>{const b=e.target.closest(".lk");if(b){pickLens(+b.dataset.l);$("#p2").scrollIntoView()}};
+$("#customUse").onclick=()=>{
+ const value=$("#customSym").value.trim();
+ if(!value){
+   $("#mechOut").innerHTML='<div class="custom-path"><p>Please describe what is happening first.</p></div>';
+   $("#customSym").focus();
+   return;
+ }
+ st.sym=null; st.customSym=value;
+ [...$("#sym").children].forEach(x=>x.setAttribute("aria-pressed","false"));
+ $("#mechOut").innerHTML=`<div class="custom-path">
+   <div class="mk">Your description</div>
+   <p><strong>${value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}</strong></p>
+   <p>That does not need to match one of our examples. We will not guess the cause from one sentence. The next step is to look at the areas around it and see which ones fit the evidence.</p>
+   <p><a href="#p2">Continue to the seven places worth looking ↓</a></p>
+ </div>`;
+ notes();
+};
 
 /* ---------- Part 2 ---------- */
 const LD=[
@@ -259,8 +288,9 @@ function solv(){const i=st.sol,s=SO[i],n=st.steps[i]||0;
 const QS=["Where does work regularly wait for one particular person?","Which problems return after supposedly being fixed?","Which processes work mainly because somebody remembers how they work?","Where is information repeatedly translated, copied or re-entered?","Which decisions are repeatedly reopened?","Where does adding more work create disproportionate strain?","Where are people manually compensating for poor system design?","What stops when one key person is unavailable?","Where do fixes improve one metric while making something else harder?","Which proposed solutions have never had their underlying assumption tested?"];
 $("#chk").innerHTML=QS.map((q,i)=>`<li><label><input type="checkbox" data-i="${i}"><span>${q}</span></label></li>`).join("");
 $("#chk").onchange=notes;
+$("#customSym").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")$("#customUse").click()});
 function notes(){const L=[];
- L.push("Symptom: "+(st.sym==null?"(not selected)":SY[st.sym][0]));
+ L.push("What I am seeing: "+(st.customSym|| (st.sym==null?"(not selected)":SY[st.sym][0])));
  if(st.lens!=null)L.push("Lens I explored: "+LN[st.lens]);
  if(st.iv!=null){const t=sim.last;L.push("Intervention I tried in the simulator: "+IV[st.iv][0]+" in “"+SC[st.sc][0]+"”")}
  if(st.sol!=null)L.push("Solution we have been considering: "+SO[st.sol][0]);
