@@ -83,6 +83,13 @@ svg text{font-family:var(--sans)}
 textarea{width:100%;min-height:150px;background:transparent;border:1px solid var(--ink);padding:12px;font:13px/1.5 var(--mono);color:var(--ink);resize:vertical}
 .ghost{min-height:44px;background:none;border:1px solid var(--ink);padding:10px 16px;margin-top:10px}
 .ghost:hover{background:var(--fog)}
+.diagnostic-visual{height:220px;margin:32px 0 34px;border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden;background:
+radial-gradient(45% 90% at 50% 44%,rgba(55,91,132,.32),transparent 70%),
+linear-gradient(180deg,#0a1627 0%,#07111e 58%,#050b13 100%)}
+.diagnostic-visual::before{content:"";position:absolute;inset:0;background:
+repeating-linear-gradient(90deg,transparent 0 82px,rgba(124,159,198,.045) 82px 83px),
+repeating-linear-gradient(0deg,transparent 0 54px,rgba(124,159,198,.035) 54px 55px)}
+.diagnostic-visual::after{content:"BLUE RESEARCH IMAGE · PREVIEW POSITION";position:absolute;right:16px;bottom:14px;padding:7px 9px;background:rgba(4,10,18,.72);border:1px solid rgba(145,171,201,.16);font:600 10px var(--mono);letter-spacing:.09em;text-transform:uppercase;color:#9eb2c9}
 footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 @media(max-width:860px){.four,.mech{grid-template-columns:1fr 1fr}.four div:nth-child(3){border-left:0;padding-left:0}.mech article:nth-child(odd){padding-left:0;border-left:0}
 .map{grid-template-columns:1fr}.sym{grid-template-columns:1fr}.chk{columns:1}section{padding:52px 0}}
@@ -95,6 +102,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Lillith Problem Studio · Quick diagnostic</div>
 <h1>Start with what you can see</h1>
 <p class="lead">A quick way to separate what is happening from what may be causing it.</p>
+<div class="diagnostic-visual" role="img" aria-label="Preview position for the blue overhead research image"></div>
 <div class="four" role="list">
 <div role="listitem"><b>WHAT YOU SEE</b><span>What is happening or being experienced.</span></div>
 <div role="listitem"><b>POSSIBLE CAUSE</b><span>What could be creating it.</span></div>
