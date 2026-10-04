@@ -97,7 +97,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
-<body><div class="w" style="padding-top:20px"><a href="index.html" class="mk" style="text-decoration:none">← Lillith Problem Studio</a></div>
+<body><div class="w" style="padding-top:20px;display:flex;gap:18px;flex-wrap:wrap"><a href="index.html" class="mk" style="text-decoration:none">← Lillith Problem Studio</a><a href="glossary.html" class="mk">Glossary ↗</a></div>
 <header class="w hero">
 <div class="mk">Lillith Problem Studio · Quick diagnostic</div>
 <h1>Start with what you can see</h1>
@@ -181,7 +181,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <p class="note">[Contact details to be added: no email address or booking link has been supplied for this page.]</p>
 </div>
 </div></section>
-<footer><div class="w mk">Lillith Problem Studio · This tool supports thinking; it does not diagnose a business. · <a href="index.html">Home</a> · <a href="terms.html">Website terms</a></div></footer>
+<footer><div class="w mk">Lillith Problem Studio · This tool supports thinking; it does not diagnose a business. · <a href="index.html">Home</a> · <a href="glossary.html">Glossary</a> · <a href="terms.html">Website terms</a></div></footer>
 
 <script>
 const $=s=>document.querySelector(s),st={sym:null,customSym:"",lens:null,sc:0,iv:null,sol:null,steps:{}};
@@ -320,5 +320,5 @@ function notes(){const L=[];
 $("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#notes").value);$("#cp").textContent="Copied"}catch(e){$("#notes").select();$("#cp").textContent="Press Ctrl/Cmd+C to copy"}};
 notes();
 </script>
-</body>
+<script src="glossary.js"></script></body>
 </html>
