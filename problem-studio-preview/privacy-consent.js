@@ -48,6 +48,15 @@
     document.body.appendChild(wrap);
     const first=wrap.querySelector('button');
     first?.focus();
+    wrap.dataset.consentFocusTrap='true';
+    wrap.addEventListener('keydown',e=>{
+      if(e.key!=='Tab') return;
+      const focusable=[...wrap.querySelectorAll('button,a[href],[tabindex]:not([tabindex="-1"])')];
+      if(!focusable.length) return;
+      const firstEl=focusable[0], lastEl=focusable[focusable.length-1];
+      if(e.shiftKey && document.activeElement===firstEl){e.preventDefault();lastEl.focus();}
+      else if(!e.shiftKey && document.activeElement===lastEl){e.preventDefault();firstEl.focus();}
+    });
     wrap.addEventListener('click',e=>{
       const choice=e.target.closest('[data-choice]')?.dataset.choice;
       if(!choice) return;
