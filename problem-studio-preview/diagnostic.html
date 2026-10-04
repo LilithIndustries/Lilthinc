@@ -35,7 +35,7 @@ p{margin:0 0 12px}.sub{color:var(--graph);max-width:58ch}
 .four span{font-size:14px;color:var(--graph);display:block}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
-a{text-underline-offset:3px}
+a{text-underline-offset:3px}.touch-copy{display:none}@media (hover:none), (pointer:coarse){.mouse-copy{display:none}.touch-copy{display:inline}}
 .interaction-guide{display:inline-flex;align-items:center;gap:9px;margin:20px 0 0;padding:10px 12px;border:1px solid rgba(20,33,61,.28);background:rgba(20,33,61,.055);font:600 11px/1.35 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
 .interaction-guide::before{content:"↘";font-size:15px}
 .step-help{display:flex;align-items:center;gap:8px;margin:15px 0 4px;font:600 11px/1.35 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
@@ -127,7 +127,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Part 1 · What you can see</div>
 <h2>What are you seeing?</h2>
 <p class="sub">Choose what is being experienced first. Leave the proposed solution aside for a moment.</p>
-<div class="interaction-guide">Click one option below, or describe your own</div>
+<div class="interaction-guide"><span class="mouse-copy">Click one option below, or describe your own</span><span class="touch-copy">Tap one option below, or describe your own</span></div>
 <div class="sym" id="sym"></div>
 <div class="custom-sym">
   <label for="customSym"><span class="mk">Something else?</span></label>
@@ -144,7 +144,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Part 2 · What could be causing it</div>
 <h2>Seven places worth looking</h2>
 <p class="sub">These are not stages, levels or scores. Each lens is a place to look, and every one of them touches the others. A problem may sit in one lens or in several at once.</p>
-<div class="interaction-guide">Click or tap any point on the map to open it</div>
+<div class="interaction-guide"><span class="mouse-copy">Click any point on the map to open it</span><span class="touch-copy">Tap any point on the map to open it</span></div>
 <div class="map">
 <svg id="svg" viewBox="0 10 680 540" role="group" aria-label="System map of seven interconnected lenses. Select a lens to read about it."></svg>
 <div class="panel" id="lensOut" aria-live="polite"></div>
@@ -328,7 +328,7 @@ function notes(){const L=[];
  const q=[...document.querySelectorAll("#chk input:checked")].map(x=>"- "+QS[x.dataset.i]);
  if(q.length)L.push("Questions worth looking at:\n"+q.join("\n"));
  $("#notes").value=L.join("\n")}
-$("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#notes").value);$("#cp").textContent="Copied"}catch(e){$("#notes").select();$("#cp").textContent="Press Ctrl/Cmd+C to copy"}};
+$("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#notes").value);$("#cp").textContent="Copied"}catch(e){$("#notes").select();$("#cp").textContent=window.matchMedia("(hover:none), (pointer:coarse)").matches?"Select the text above and copy it":"Press Ctrl/Cmd+C to copy"}};
 notes();
 </script>
 <script src="glossary.js"></script></body>
