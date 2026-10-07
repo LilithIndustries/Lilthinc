@@ -223,23 +223,46 @@ window.AI_WORKFLOW_ENGINE = (() => {
 
   function normalise(s){return String(s||"").toLowerCase().replace(/[^a-z0-9\s-]/g," ").replace(/\s+/g," ").trim();}
   function tokenise(s){return normalise(s).split(" ").filter(x=>x.length>2);}
-  function match(query){
+  function scoreTemplate(query,template){
+    const q=normalise(query);
+    const qt=tokenise(q);
+    let best=0;
+    [template.title,...template.aliases].map(normalise).forEach(a=>{
+      if(q===a){best=Math.max(best,100);return;}
+      if(q.length>=4 && (q.includes(a)||a.includes(q))){best=Math.max(best,78);}
+      const at=tokenise(a);
+      const overlap=qt.filter(x=>at.includes(x)).length;
+      if(overlap){
+        const coverage=overlap/Math.max(qt.length,at.length);
+        best=Math.max(best,Math.round(18+(coverage*42)+(overlap*5)));
+      }
+    });
+    return best;
+  }
+  function interpret(query){
     const q=normalise(query);
     if(!q) return null;
-    let best=null, bestScore=0;
-    templates.forEach(t=>{
-      const hay=[t.title,...t.aliases].map(normalise);
-      let score=0;
-      hay.forEach(a=>{
-        if(q===a) score=Math.max(score,100);
-        else if(q.includes(a)||a.includes(q)) score=Math.max(score,60);
-        const qt=tokenise(q), at=tokenise(a);
-        const overlap=qt.filter(x=>at.includes(x)).length;
-        score=Math.max(score,overlap*12);
-      });
-      if(score>bestScore){best=t;bestScore=score;}
-    });
-    return bestScore>=12 ? best : {...generic,title:query.trim()};
+    const ranked=templates
+      .map(t=>({workflow:t,score:scoreTemplate(q,t)}))
+      .sort((a,b)=>b.score-a.score);
+
+    const best=ranked[0];
+    const second=ranked[1];
+    const suggestions=ranked.filter(x=>x.score>=24).slice(0,3).map(x=>x.workflow);
+
+    if(best && best.score>=74 && (!second || best.score-second.score>=10 || best.score>=95)){
+      return {type:"match",workflow:best.workflow,confidence:best.score,suggestions};
+    }
+
+    if(best && best.score>=28){
+      return {type:"clarify",query:query.trim(),confidence:best.score,suggestions};
+    }
+
+    return {type:"clarify",query:query.trim(),confidence:0,suggestions:[]};
   }
-  return {STATUS,templates,generic,match};
+  function match(query){
+    const result=interpret(query);
+    return result && result.type==="match" ? result.workflow : null;
+  }
+  return {STATUS,templates,generic,match,interpret};
 })();
