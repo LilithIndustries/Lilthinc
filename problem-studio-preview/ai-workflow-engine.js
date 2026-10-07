@@ -227,14 +227,15 @@ window.AI_WORKFLOW_ENGINE = (() => {
     const q=normalise(query);
     const qt=tokenise(q);
     let best=0;
-    [template.title,...template.aliases].map(normalise).forEach(a=>{
+    [template.title,...template.aliases].map(normalise).forEach((a,index)=>{
       if(q===a){best=Math.max(best,100);return;}
-      if(q.length>=4 && (q.includes(a)||a.includes(q))){best=Math.max(best,78);}
+      if(q.length>=4 && (q.includes(a)||a.includes(q))){best=Math.max(best,index===0?84:78);}
       const at=tokenise(a);
       const overlap=qt.filter(x=>at.includes(x)).length;
       if(overlap){
         const coverage=overlap/Math.max(qt.length,at.length);
-        best=Math.max(best,Math.round(18+(coverage*42)+(overlap*5)));
+        const titleBonus=index===0?12:0;
+        best=Math.max(best,Math.round(18+(coverage*42)+(overlap*5)+titleBonus));
       }
     });
     return best;
@@ -248,7 +249,7 @@ window.AI_WORKFLOW_ENGINE = (() => {
 
     const best=ranked[0];
     const second=ranked[1];
-    const suggestions=ranked.filter(x=>x.score>=24).slice(0,3).map(x=>x.workflow);
+    const suggestions=ranked.filter(x=>x.score>=45).slice(0,3).map(x=>x.workflow);
 
     if(best && best.score>=74 && (!second || best.score-second.score>=10 || best.score>=95)){
       return {type:"match",workflow:best.workflow,confidence:best.score,suggestions};
