@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <title>Can AI Do This? | Lillith Problem Studio</title>
+  <meta name="description" content="Search everyday business tasks and see whether AI can do them, how practical they are in a real business, where human involvement still matters, and what would need to be true for implementation to work.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#f5f3ee">
+  <meta name="color-scheme" content="light">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="page.css">
+  <style>
+    .library-hero{padding-bottom:48px}
+    .library-search-wrap{margin-top:38px;max-width:880px}
+    .library-search{width:100%;min-height:64px;border:1px solid var(--line);border-bottom:2px solid var(--ink);background:rgba(255,255,255,.52);padding:14px 18px;font:italic clamp(1.25rem,2vw,1.65rem)/1.3 var(--serif);color:var(--ink)}
+    .library-search:focus{outline:2px solid var(--accent);outline-offset:3px}
+    .library-meta{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0 0}
+    .library-count{font:600 .6rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--graph)}
+    .library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:28px}
+    .task{border:1px solid var(--line);background:rgba(255,255,255,.38);min-width:0}
+    .task summary{list-style:none;cursor:pointer;padding:22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
+    .task summary::-webkit-details-marker{display:none}
+    .task summary:hover{background:rgba(83,110,114,.06)}
+    .task[open] summary{background:rgba(83,110,114,.07);border-bottom:1px solid var(--line)}
+    .task-title{font-size:1.3rem;line-height:1.15;letter-spacing:-.025em;margin:5px 0 0}
+    .task-cat{font:600 .58rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+    .task-cue{font:600 .58rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+    .task-cue::after{content:" +";font-size:.85rem}
+    .task[open] .task-cue::after{content:" ×"}
+    .task-body{padding:22px}
+    .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+    .score{border:1px solid var(--line);padding:14px;background:rgba(251,250,247,.62)}
+    .score-label{font:600 .55rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--graph)}
+    .score-value{font-size:1.55rem;line-height:1.1;margin-top:5px}
+    .score-value small{font:600 .62rem var(--mono);color:var(--accent);letter-spacing:.05em}
+    .task-body h4{font:600 .57rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin:20px 0 6px}
+    .task-body p{margin:0;color:var(--graph)}
+    .readiness{display:inline-flex;align-items:center;border:1px solid var(--line);padding:7px 9px;margin-top:18px;font:600 .56rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .playbook{display:flex;justify-content:space-between;gap:18px;align-items:center;border-top:1px solid var(--line);margin-top:22px;padding-top:18px}
+    .playbook p{font-size:.88rem;max-width:46ch}
+    .mini-btn{flex:0 0 auto;min-height:42px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--ink);padding:8px 12px;text-decoration:none;font:600 .58rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .mini-btn:hover{background:var(--ink);color:var(--paper)}
+    .empty{border-top:1px solid var(--line);padding:36px 0;color:var(--graph)}
+    .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:34px}
+    .principle{border-top:1px solid var(--ink);padding-top:14px}
+    .principle strong{font-size:1rem}
+    .principle p{font-size:.86rem;color:var(--graph);margin:8px 0 0}
+    .callout-strong{font:italic clamp(1.35rem,2.6vw,2rem)/1.45 var(--serif);max-width:34ch;margin:0;color:var(--graph)}
+    @media(max-width:900px){.library-grid,.principles{grid-template-columns:1fr 1fr}}
+    @media(max-width:620px){.library-grid,.principles,.score-grid{grid-template-columns:1fr}.task summary,.task-body{padding:18px}.playbook{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <a class="wordmark" href="index.html"><span></span>Lillith <b>Problem Studio</b></a>
+  <nav>
+    <a href="problems.html">Problems</a>
+    <a href="diagnostic.html">Diagnostic</a>
+    <a href="insights.html">Insights</a>
+    <a href="glossary.html">Glossary</a>
+    <a href="how-we-work.html">How we work</a>
+    <a class="navcta" href="contact.html">Bring us the problem</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero library-hero">
+    <div class="wrap">
+      <div class="micro">AI × Business Task Library</div>
+      <h1 class="display">Can AI<br><em>do this?</em></h1>
+      <p class="lead">Search a normal business task. Get a straight answer about what AI can do, what would need to be true in a real business, and where a person still belongs.</p>
+      <p class="intro">No “AI everywhere” sales pitch. Some work is AI-ready. Some is AI-adjacent. Some should stay human-led. The useful question is not whether AI is good or bad. It is where it creates real value without costing you control.</p>
+
+      <div class="library-search-wrap">
+        <label class="micro" for="taskSearch">What are you trying to do?</label>
+        <input id="taskSearch" class="library-search" type="search" autocomplete="off" placeholder="e.g. chase invoices, train staff, answer customer emails…">
+        <div class="library-meta">
+          <div id="count" class="library-count" aria-live="polite"></div>
+          <div class="filters" id="filters" aria-label="Filter business tasks"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="micro">Browse the library</div>
+      <div id="taskGrid" class="library-grid"></div>
+      <div id="empty" class="empty" hidden>No matching task yet. Try describing the work more simply.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <div class="micro">How we judge it</div>
+        <h2>Capability is not<br><em>the same as suitability.</em></h2>
+      </div>
+      <div>
+        <p class="callout-strong">“Can AI do this?” and “Could AI do this in my business?” are different questions.</p>
+        <div class="principles">
+          <div class="principle"><strong>Can</strong><p>Technical capability: can current AI perform meaningful parts of the task?</p></div>
+          <div class="principle"><strong>Could</strong><p>Practical fit: is this commonly workable once access, context, controls and authority are considered?</p></div>
+          <div class="principle"><strong>Boundary</strong><p>What still needs a person, approval, accountability or real-world action?</p></div>
+          <div class="principle"><strong>Readiness</strong><p>AI-ready, AI-adjacent, human-led, human-required, or simply not worth automating.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <div class="micro">The next question</div>
+        <h2>Okay. But how would<br><em>we actually do it?</em></h2>
+      </div>
+      <div>
+        <p class="intro">That is where generic advice stops being useful. Implementation depends on your systems, information, people, authority, risk and the way your business actually works.</p>
+        <p>Implementation playbooks are being built behind this library. For business-specific calibration, we first establish what the AI needs to know, what it must not know, what it may do, and where human judgement stays.</p>
+        <a class="btn primary" href="contact.html">Talk about implementation</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footgrid">
+    <div><strong>Lillith Problem Studio</strong><p>Independent problem-solving for complex, cross-functional problems.</p></div>
+    <div><a href="problems.html">Problems</a><a href="diagnostic.html">Diagnostic</a><a href="insights.html">Insights</a><a href="glossary.html">Glossary</a><a href="how-we-work.html">How we work</a><a href="contact.html">Contact</a></div>
+    <div><a href="terms.html">Website terms</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="accessibility.html">Accessibility</a></div>
+  </div>
+  <div class="wrap legal">Lillith Problem Studio · Australia · Trading structure and legal entity details to be verified before production launch.</div>
+</footer>
+
+<script>
+const TASKS = [
+  {t:"Answer routine customer emails",c:"Customer",can:5,could:5,r:"AI-ready",why:"AI can draft or respond to repeatable enquiries using approved business context, tone and escalation rules.",needs:"Current policies, service information, tone guidance and access to the relevant enquiry.",boundary:"Exceptions, complaints, sensitive matters, unusual commitments and anything outside the approved rules should escalate to a person."},
+  {t:"Respond to customer complaints",c:"Customer",can:5,could:4,r:"Human-led · AI-assisted",why:"AI can classify the issue, reconstruct the history, draft a response and suggest resolution options.",needs:"Conversation history, complaint policy, customer context, authority limits and escalation rules.",boundary:"Material admissions, compensation outside delegated limits, legal threats and high-impact relationship decisions need accountable human approval."},
+  {t:"Summarise meetings and identify actions",c:"Admin",can:5,could:5,r:"AI-ready",why:"Recorded or transcribed meetings are well suited to summarisation, decision capture and action extraction.",needs:"A recording or transcript, participant context and a defined format for decisions and actions.",boundary:"Someone should verify consequential decisions and commitments before they are treated as final."},
+  {t:"Write meeting minutes from a recording",c:"Admin",can:5,could:5,r:"AI-ready",why:"AI can turn recorded speech into structured minutes, decisions, owners and deadlines.",needs:"Usable audio or transcript plus the organisation's preferred minute format.",boundary:"Formal governance minutes may require review and approval under the organisation's own rules."},
+  {t:"Find information across policies and procedures",c:"Knowledge",can:5,could:5,r:"AI-ready",why:"AI can search and answer questions across an approved knowledge set far faster than people manually opening documents.",needs:"Accessible, current source documents and clear rules about which source is authoritative.",boundary:"Conflicting, outdated or missing source material must be surfaced rather than silently guessed around."},
+  {t:"Answer staff questions about how the business works",c:"Knowledge",can:5,could:5,r:"AI-ready",why:"A grounded internal assistant can answer recurring questions from approved business knowledge and reduce interruptions to key people.",needs:"Policies, procedures, decision rules, role guidance and escalation paths.",boundary:"The assistant should identify uncertainty and escalate novel or high-impact situations rather than invent company policy."},
+  {t:"Train or onboard new employees",c:"People",can:5,could:5,r:"AI-ready",why:"AI can provide role-specific explanations, guided practice, quizzes and just-in-time answers using company material.",needs:"Accurate role information, procedures, examples, standards and access boundaries.",boundary:"Human leaders still own employment decisions, cultural integration, supervision and formal competency sign-off where required."},
+  {t:"Screen job applications",c:"People",can:5,could:3,r:"Human-led · high-control",why:"AI can extract qualifications, compare evidence against explicit job criteria and organise applications.",needs:"Job-relevant criteria, consistent application data and appropriate governance.",boundary:"Bias, discrimination, privacy and employment-law risks make autonomous rejection or ranking a poor default. Humans should own consequential selection decisions."},
+  {t:"Draft a position description",c:"People",can:5,could:5,r:"AI-ready",why:"AI can draft role purpose, responsibilities, competencies and measures from business context.",needs:"Actual work performed, reporting lines, decision rights and required capabilities.",boundary:"Management should confirm the document reflects the real role rather than an idealised generic one."},
+  {t:"Write performance feedback",c:"People",can:5,could:4,r:"Human-led · AI-assisted",why:"AI can help organise evidence, remove inflammatory wording and structure constructive feedback.",needs:"Specific observed behaviour, expectations and relevant performance evidence.",boundary:"The manager remains responsible for fairness, accuracy, context and the actual conversation."},
+  {t:"Terminate an employee",c:"People",can:3,could:1,r:"Human-required",why:"AI can help organise documentation, timelines, questions and draft communications, but termination is a consequential employment action.",needs:"Accurate records, applicable policy and qualified human/legal input where appropriate.",boundary:"The decision, legal compliance, accountability and human conversation must remain with authorised people."},
+  {t:"Chase unpaid invoices",c:"Finance",can:5,could:5,r:"AI-ready",why:"AI can generate reminders, vary tone by ageing stage, trigger follow-ups and escalate according to rules.",needs:"Invoice status, customer details, payment terms, previous contact and escalation thresholds.",boundary:"Disputes, hardship, legal escalation and material relationship decisions should move to a person."},
+  {t:"Approve routine expenditure",c:"Finance",can:4,could:4,r:"AI-adjacent",why:"AI can check requests against rules, budgets, supporting evidence and delegated thresholds, then route or approve where the business explicitly permits it.",needs:"Delegation rules, budgets, purchase data, fraud controls and authenticated system access.",boundary:"The business must define delegated authority. High-value, unusual, conflicted or weakly evidenced transactions should escalate."},
+  {t:"Reconcile transactions",c:"Finance",can:5,could:5,r:"AI-ready with controls",why:"AI and automation can match records, identify anomalies and prepare exceptions for review.",needs:"Structured transaction data, accounting records and matching rules.",boundary:"Exceptions, ambiguous transactions and formal accounting responsibility may require qualified review."},
+  {t:"Prepare a management report",c:"Finance",can:5,could:5,r:"AI-ready",why:"AI can combine structured information, explain movement, identify patterns and draft narrative reporting.",needs:"Reliable source data, metric definitions, reporting period and business context.",boundary:"Material claims and strategic conclusions should be checked against source data before use."},
+  {t:"Forecast cash flow",c:"Finance",can:5,could:4,r:"AI-assisted",why:"AI can model scenarios, identify drivers and explain implications when supplied with reliable financial inputs.",needs:"Current financial data, assumptions, payment patterns and scenario parameters.",boundary:"Forecasts are conditional, not facts. Financial decisions still require accountable human judgement."},
+  {t:"Draft a sales proposal",c:"Sales",can:5,could:5,r:"AI-ready",why:"AI can assemble business context, customer needs, approved proof points and offer structure into a tailored proposal.",needs:"Customer context, approved offer details, pricing rules, evidence and brand voice.",boundary:"Commitments, pricing exceptions and contractual statements should follow delegated authority."},
+  {t:"Qualify inbound sales leads",c:"Sales",can:5,could:5,r:"AI-ready",why:"AI can ask consistent questions, interpret responses, score against explicit criteria and route leads.",needs:"Qualification criteria, exclusions, customer information and CRM access.",boundary:"The business should monitor for poor proxies, unfair exclusion and edge cases."},
+  {t:"Follow up sales leads",c:"Sales",can:5,could:5,r:"AI-ready",why:"AI can personalise follow-up, select timing from rules and maintain continuity across interactions.",needs:"Lead history, offer information, tone, contact permissions and CRM status.",boundary:"High-value negotiation, unusual objections and commitments outside standard parameters should escalate."},
+  {t:"Negotiate with a supplier",c:"Sales",can:5,could:4,r:"Human-led · AI-assisted",why:"AI can research positions, model trade-offs, draft counteroffers and conduct bounded digital negotiation.",needs:"Objectives, acceptable ranges, supplier history, constraints and delegated authority.",boundary:"Material commercial commitments, relationship strategy and anything beyond delegated limits remain accountable to a person."},
+  {t:"Create social media posts",c:"Marketing",can:5,could:5,r:"AI-ready",why:"AI is highly capable at producing and adapting content when it has real brand context and source material.",needs:"Audience, brand voice, factual source material, content rules and approval requirements.",boundary:"Claims, sensitive topics and reputation-sensitive content require appropriate review."},
+  {t:"Plan a marketing campaign",c:"Marketing",can:5,could:5,r:"AI-assisted",why:"AI can analyse inputs, generate campaign architecture, messaging variants, audience hypotheses and measurement plans.",needs:"Commercial objective, customer evidence, brand context, channels, budget and constraints.",boundary:"Strategy should be tested against actual market evidence rather than accepted because the generated plan sounds convincing."},
+  {t:"Analyse customer reviews",c:"Marketing",can:5,could:5,r:"AI-ready",why:"AI can classify themes, sentiment, repeated friction and emerging patterns across large volumes of feedback.",needs:"Review data and enough context to distinguish normal variation from meaningful signals.",boundary:"Sentiment and inferred intent should be treated as evidence signals, not unquestionable fact."},
+  {t:"Research competitors",c:"Strategy",can:5,could:5,r:"AI-ready",why:"AI can gather, structure and compare public information rapidly, especially when connected to current sources.",needs:"Defined comparison questions and access to current, credible information.",boundary:"Unknown internal competitor facts should remain unknown; inference must be labelled rather than presented as evidence."},
+  {t:"Write or update an SOP",c:"Operations",can:5,could:5,r:"AI-ready",why:"AI can interview process owners, organise steps, identify ambiguity and draft usable procedures.",needs:"The real workflow, exceptions, responsibilities, examples and current systems.",boundary:"The people doing the work should verify that the SOP describes reality and not merely the intended process."},
+  {t:"Monitor a repeatable workflow",c:"Operations",can:5,could:5,r:"AI-ready / integration-dependent",why:"AI can watch status information, identify delays, follow rules and trigger reminders or escalations when connected to the workflow.",needs:"System access, state definitions, ownership, timing rules and escalation logic.",boundary:"The AI cannot reliably monitor what it cannot observe; offline or undocumented work needs a data path first."},
+  {t:"Schedule staff or appointments",c:"Operations",can:5,could:5,r:"AI-ready",why:"AI can coordinate availability, constraints, priorities and changes when connected to authoritative calendars or scheduling systems.",needs:"Availability data, operating rules, skills, coverage requirements and system access.",boundary:"Fatigue, industrial requirements, accessibility needs and unusual personal circumstances need appropriate controls."},
+  {t:"Inspect equipment from photos or video",c:"Operations",can:5,could:4,r:"AI-adjacent",why:"Multimodal AI can inspect visible conditions, compare against references and flag anomalies from images or video.",needs:"Clear imagery, known reference conditions, task-specific evaluation criteria and sometimes measurement/sensor data.",boundary:"It cannot see what the capture does not show. Safety-critical diagnosis and regulated inspection may still require qualified physical verification."},
+  {t:"Inspect a site remotely",c:"Operations",can:5,could:4,r:"AI-adjacent",why:"AI can analyse live or recorded imagery, documents, maps, measurements and sensor information when those inputs are available.",needs:"Adequate visual coverage, relevant measurements, location context and a reliable capture process.",boundary:"Hidden conditions, inaccessible areas and legally required on-site inspection remain outside what remote evidence can prove."},
+  {t:"Measure an object from an image",c:"Operations",can:4,could:3,r:"AI-adjacent",why:"AI can estimate or calculate dimensions when the image contains a reliable scale reference, calibration data or depth information.",needs:"A known reference dimension, camera calibration or suitable depth/measurement input.",boundary:"Without a trustworthy scale, apparent image size is not a reliable physical measurement."},
+  {t:"Manage inventory levels",c:"Operations",can:5,could:5,r:"AI-ready / integration-dependent",why:"AI can analyse demand, stock movement, lead times and reorder rules, then recommend or trigger replenishment.",needs:"Current inventory, sales/usage history, supplier lead times, reorder rules and system access.",boundary:"Bad inventory data produces bad recommendations. Unusual events and major purchasing commitments need defined controls."},
+  {t:"Prepare a quote from known inputs",c:"Operations",can:5,could:5,r:"AI-ready with rules",why:"AI can assemble quote components, apply pricing logic, explain assumptions and prepare customer-facing documents.",needs:"Approved price data, scope information, inclusions/exclusions, margin rules and authority thresholds.",boundary:"Ambiguous scope, unusual risk, custom pricing and commitments outside delegated authority should escalate."},
+  {t:"Review a contract",c:"Legal / Risk",can:5,could:4,r:"Human-led · AI-assisted",why:"AI can summarise clauses, compare versions, identify unusual terms and raise questions against supplied standards.",needs:"The contract, approved clause positions, business context and jurisdiction-aware professional input where needed.",boundary:"AI output is not a substitute for qualified legal advice where legal judgement or material risk requires it."},
+  {t:"Draft a contract from an approved template",c:"Legal / Risk",can:5,could:4,r:"AI-assisted with controls",why:"AI can populate approved templates, tailor defined provisions and flag missing information.",needs:"Approved templates, authorised clause options, transaction facts and review rules.",boundary:"Novel clauses, material deviations and legal judgement should be reviewed by appropriately qualified people."},
+  {t:"Detect policy or process inconsistencies",c:"Risk",can:5,could:5,r:"AI-ready",why:"AI can compare documents, identify contradictions, duplicated rules, gaps and differences in terminology.",needs:"The relevant source set and a way to identify current versus superseded material.",boundary:"A contradiction can be detected automatically; deciding which rule should prevail may require authorised human judgement."},
+  {t:"Identify possible fraud or anomalous activity",c:"Risk",can:5,could:4,r:"Human-led · high-control",why:"AI can identify unusual patterns, inconsistent records and transactions that merit investigation.",needs:"Reliable historical data, known risk indicators and careful threshold design.",boundary:"An anomaly is not proof of wrongdoing. Investigation and consequential action must not be based on an opaque AI signal alone."},
+  {t:"Prioritise a manager's inbox",c:"Admin",can:5,could:5,r:"AI-ready",why:"AI can classify messages by urgency, topic, sender, required action and the manager's established priorities.",needs:"Email access, priority rules, role context and handling rules for sensitive material.",boundary:"Critical messages should not disappear solely because an automated classifier scored them incorrectly; exception handling matters."},
+  {t:"Turn voice notes into organised work",c:"Admin",can:5,could:5,r:"AI-ready",why:"AI can transcribe, separate ideas from actions, create tasks, draft documents and file knowledge from spoken input.",needs:"Recorded audio and an agreed destination or structure for the resulting information.",boundary:"Names, dates, commitments and other consequential details should be verified when audio quality or context is uncertain."},
+  {t:"Create a first draft from rough notes",c:"Admin",can:5,could:5,r:"AI-ready",why:"Turning incomplete notes into structured drafts is one of AI's strongest low-risk assistance patterns.",needs:"The rough notes, intended audience, purpose and any required constraints.",boundary:"The author remains responsible for factual accuracy, commitments and final meaning."},
+  {t:"Make a final business decision",c:"Strategy",can:5,could:3,r:"Human-led",why:"AI can assemble evidence, model options, challenge assumptions and recommend a course of action.",needs:"Reliable evidence, objectives, constraints, uncertainty and competing options.",boundary:"The accountable decision-maker should retain final authority where consequences, values, legal duty or organisational responsibility are material."}
+];
+
+const categories=["All",...Array.from(new Set(TASKS.map(x=>x.c))).sort()];
+const grid=document.getElementById("taskGrid");
+const search=document.getElementById("taskSearch");
+const filters=document.getElementById("filters");
+const count=document.getElementById("count");
+const empty=document.getElementById("empty");
+let active="All";
+
+function scoreText(n){
+  if(n>=5)return "Very high";
+  if(n===4)return "High";
+  if(n===3)return "Conditional";
+  if(n===2)return "Low";
+  return "Very low";
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
+function render(){
+  const q=search.value.trim().toLowerCase();
+  const items=TASKS.filter(x=>{
+    const cat=active==="All"||x.c===active;
+    const hay=[x.t,x.c,x.why,x.needs,x.boundary,x.r].join(" ").toLowerCase();
+    return cat && (!q||hay.includes(q));
+  });
+  count.textContent=items.length+" task"+(items.length===1?"":"s")+" shown";
+  empty.hidden=items.length!==0;
+  grid.innerHTML=items.map((x,i)=>`
+    <details class="task">
+      <summary>
+        <div><div class="task-cat">${esc(x.c)}</div><div class="task-title">${esc(x.t)}</div></div>
+        <div class="task-cue">Open</div>
+      </summary>
+      <div class="task-body">
+        <div class="score-grid">
+          <div class="score"><div class="score-label">Can AI do this?</div><div class="score-value">${x.can}/5 <small>${scoreText(x.can)}</small></div></div>
+          <div class="score"><div class="score-label">Could AI do this in a business?</div><div class="score-value">${x.could}/5 <small>${scoreText(x.could)}</small></div></div>
+        </div>
+        <h4>Why</h4><p>${esc(x.why)}</p>
+        <h4>What would need to be true</h4><p>${esc(x.needs)}</p>
+        <h4>Human / control boundary</h4><p>${esc(x.boundary)}</p>
+        <div class="readiness">${esc(x.r)}</div>
+        <div class="playbook">
+          <p>The implementation layer turns this general answer into a workflow for your systems, information, people and authority structure.</p>
+          <a class="mini-btn" href="contact.html?source=ai-library&amp;task=${encodeURIComponent(x.t)}">How would we do this?</a>
+        </div>
+      </div>
+    </details>`).join("");
+}
+categories.forEach(cat=>{
+  const b=document.createElement("button");
+  b.type="button";
+  b.className="filter";
+  b.textContent=cat;
+  b.setAttribute("aria-pressed",cat==="All"?"true":"false");
+  b.addEventListener("click",()=>{
+    active=cat;
+    [...filters.children].forEach(el=>el.setAttribute("aria-pressed",String(el===b)));
+    render();
+  });
+  filters.appendChild(b);
+});
+search.addEventListener("input",render);
+render();
+</script>
+<script src="glossary.js"></script>
+<script src="site-ui.js"></script>
+<script src="privacy-consent.js"></script>
+</body>
+</html>
