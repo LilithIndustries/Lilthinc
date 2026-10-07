@@ -9,6 +9,27 @@ window.AI_WORKFLOW_ENGINE = (() => {
 
   const templates = [
     {
+      id:"social-media",
+      aliases:["social media","socials","social media management","social media marketing","instagram","facebook","linkedin","tiktok","content for social media","social content"],
+      title:"Social media",
+      answer:"AI can work independently and alongside people to complete many of the tasks involved in social media.",
+      opportunities:["Research","Strategy development","Content planning","Caption writing","Content creation","Publishing","Scheduling","Community monitoring","Performance analysis","Reporting"],
+      secret:"AI can also monitor changes to platform policies, AI-content rules and terms of use, then flag anything that may affect how your business creates, labels, publishes or automates content.",
+      steps:[
+        ["Research","Research audiences, competitors, trends, topics and content opportunities.","ready"],
+        ["Strategy development","Turn business goals, audience context and channel constraints into a social strategy.","context"],
+        ["Content planning","Build themes, calendars, campaigns and publishing plans around the strategy.","context"],
+        ["Caption writing","Draft captions, hooks, calls to action and channel-specific variations.","ready"],
+        ["Content creation","Assist with briefs, concepts, scripts, image/video prompts and repurposing.","ready"],
+        ["Publishing","Prepare, schedule and publish content through connected tools where authorised.","integration"],
+        ["Community monitoring","Monitor comments, mentions and recurring questions, with escalation rules for sensitive cases.","integration"],
+        ["Performance analysis","Analyse reach, engagement, conversions and content patterns against business goals.","integration"],
+        ["Policy monitoring","Watch platform policies, AI disclosure requirements and terms for relevant changes.","integration"],
+        ["Human judgement","Keep brand-sensitive, reputational, legal and high-stakes decisions with an authorised person.","human"]
+      ],
+      connections:["Brand","Marketing strategy","Customer service","Analytics","Compliance"]
+    },
+    {
       id:"client-comms",
       aliases:["client email","client emails","customer email","customer emails","inbox","customer enquiry","customer enquiries","client communication","customer communication","reply to customers","answer customer"],
       title:"Client communication",
