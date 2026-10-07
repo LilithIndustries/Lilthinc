@@ -2,7 +2,7 @@
 <html lang="en-AU">
 <head>
   <title>Can AI Do This? | Lillith Problem Studio</title>
-  <meta name="description" content="Tell us one thing you do at work. We will show you the workflow AI could potentially handle around it.">
+  <meta name="description" content="Tell us one thing you do at work and see what AI could help with.">
   <meta name="robots" content="noindex,nofollow">
   <meta charset="utf-8">
   <meta name="theme-color" content="#f5f3ee">
@@ -12,40 +12,36 @@
   <link rel="stylesheet" href="page.css">
   <style>
     .ai-page{min-height:calc(100vh - 80px)}
-    .ai-hero{padding:clamp(72px,12vw,150px) 0 clamp(64px,10vw,120px)}
-    .ai-hero .wrap{max-width:980px}
-    .ai-hero h1{margin:10px 0 24px;font-size:clamp(4rem,11vw,9rem);line-height:.82;letter-spacing:-.07em}
-    .ai-hero .lead{max-width:24ch;margin:0 0 34px;font-size:clamp(1.2rem,2.3vw,1.65rem)}
-    .search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;max-width:850px}
-    .ai-input{min-height:68px;width:100%;border:1px solid var(--line);border-bottom:2px solid var(--ink);background:rgba(255,255,255,.55);padding:15px 18px;font:italic clamp(1.2rem,2vw,1.55rem)/1.3 var(--serif);color:var(--ink)}
+    .ai-hero{padding:clamp(70px,11vw,140px) 0 clamp(58px,8vw,92px)}
+    .ai-hero .wrap,.result .wrap{max-width:900px}
+    .ai-hero h1{margin:10px 0 22px;font-size:clamp(4rem,11vw,8.4rem);line-height:.83;letter-spacing:-.07em}
+    .ai-hero .lead{margin:0 0 30px;font-size:clamp(1.2rem,2.3vw,1.55rem)}
+    .search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+    .ai-input{min-height:66px;width:100%;border:1px solid var(--line);border-bottom:2px solid var(--ink);background:rgba(255,255,255,.55);padding:14px 18px;font:italic clamp(1.15rem,2vw,1.45rem)/1.3 var(--serif);color:var(--ink)}
     .ai-input:focus{outline:2px solid var(--accent);outline-offset:3px}
-    .ai-submit{min-width:170px}
-    .example{margin-top:12px;font-size:.78rem;color:var(--graph)}
-    .result{border-top:1px solid var(--ink);padding:clamp(40px,7vw,72px) 0 clamp(54px,8vw,90px);background:rgba(255,255,255,.28)}
+    .ai-submit{min-width:150px}
+    .example{margin-top:11px;font-size:.76rem;color:var(--graph)}
+    .result{border-top:1px solid var(--ink);padding:clamp(42px,7vw,74px) 0 clamp(58px,8vw,92px);background:rgba(255,255,255,.28)}
     .result[hidden]{display:none}
-    .result .wrap{max-width:980px}
-    .result-label{font:600 .58rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
-    .result h2{font-size:clamp(2.2rem,6vw,5rem);line-height:.95;letter-spacing:-.05em;margin:10px 0 18px}
-    .result-lead{font:italic clamp(1.2rem,2.5vw,1.7rem)/1.45 var(--serif);max-width:34ch;margin:0 0 34px;color:var(--graph)}
-    .flow-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 30px}
-    .flow-node{border:1px solid var(--line);background:rgba(251,250,247,.76);padding:9px 11px;font:600 .58rem var(--mono);letter-spacing:.06em;text-transform:uppercase}
-    .flow-arrow{color:var(--accent);font-size:.9rem}
-    .flow-more{font:600 .58rem var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
-    .surprise{max-width:720px;border-left:2px solid var(--accent);padding:2px 0 2px 18px;margin:0 0 30px}
-    .surprise small{display:block;font:600 .55rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
-    .surprise p{margin:0;color:var(--graph);font-size:.95rem;line-height:1.55}
-    .unlock{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-    .unlock-note{font-size:.8rem;color:var(--graph)}
-    .quiet-link{font:600 .57rem var(--mono);letter-spacing:.07em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
-    .mini-footer{padding:26px 0;border-top:1px solid var(--line);font-size:.72rem;color:var(--graph)}
+    .result-label{font:600 .57rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+    .result h2{font-size:clamp(2.2rem,6vw,4.8rem);line-height:.95;letter-spacing:-.05em;margin:10px 0 18px}
+    .answer{font:italic clamp(1.2rem,2.35vw,1.6rem)/1.48 var(--serif);max-width:36ch;margin:0 0 34px;color:var(--graph)}
+    .opportunities-title{font:600 .58rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+    .opportunities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line);max-width:760px;margin:0 0 34px;padding:0;list-style:none}
+    .opportunities li{padding:12px 8px 12px 0;border-bottom:1px solid var(--line);font-size:1rem}
+    .secret{max-width:760px;border-left:2px solid var(--accent);padding:2px 0 2px 18px;margin:0 0 30px}
+    .secret small{display:block;font:600 .55rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+    .secret p{margin:0;color:var(--graph);font-size:.95rem;line-height:1.55}
+    .next-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .text-link{font:600 .58rem var(--mono);letter-spacing:.07em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--ink);padding:8px 0}
+    .mini-footer{padding:25px 0;border-top:1px solid var(--line);font-size:.72rem;color:var(--graph)}
     .mini-footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     .mini-footer a{color:inherit}
     @media(max-width:700px){
       .search-row{grid-template-columns:1fr}
       .ai-submit{width:100%}
       .ai-hero h1{font-size:clamp(3.6rem,19vw,6rem)}
-      .flow-arrow{display:none}
-      .flow-line{gap:7px}
+      .opportunities{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -70,10 +66,10 @@
       <h1>Can AI<br><em>do this?</em></h1>
       <p class="lead">Tell us one thing you do at work.</p>
       <div class="search-row">
-        <input id="workflowSearch" class="ai-input" type="search" autocomplete="off" aria-label="One thing you do at work" placeholder="e.g. client emails">
+        <input id="workflowSearch" class="ai-input" type="search" autocomplete="off" aria-label="One thing you do at work" placeholder="e.g. social media">
         <button id="workflowSubmit" class="btn primary ai-submit" type="button">Show me</button>
       </div>
-      <div class="example">Try: client emails · staff scheduling · quoting · site visits · material supply</div>
+      <div class="example">Try: social media · client emails · staff scheduling · quoting · site visits</div>
     </div>
   </section>
 
@@ -81,18 +77,19 @@
     <div class="wrap">
       <div id="resultLabel" class="result-label"></div>
       <h2 id="resultTitle"></h2>
-      <p id="resultLead" class="result-lead"></p>
+      <p id="answerText" class="answer"></p>
 
-      <div id="flowLine" class="flow-line" aria-label="Workflow preview"></div>
+      <div class="opportunities-title">Common tasks and opportunities</div>
+      <ul id="opportunityList" class="opportunities"></ul>
 
-      <div class="surprise">
+      <div class="secret">
         <small>You may not have considered</small>
-        <p id="surpriseText"></p>
+        <p id="secretText"></p>
       </div>
 
-      <div class="unlock">
-        <a id="unlockLink" class="btn primary" href="contact.html?source=ai-workflow-unlock">See the full workflow</a>
-        <span id="unlockNote" class="unlock-note"></span>
+      <div class="next-actions">
+        <a id="specificLink" class="text-link" href="contact.html?source=ai-specific">For your specific requirements</a>
+        <a id="workflowLink" class="btn primary" href="contact.html?source=ai-workflow-unlock">See the full workflow</a>
       </div>
     </div>
   </section>
@@ -113,14 +110,18 @@ const submit=document.getElementById("workflowSubmit");
 const result=document.getElementById("workflowResult");
 const resultLabel=document.getElementById("resultLabel");
 const resultTitle=document.getElementById("resultTitle");
-const resultLead=document.getElementById("resultLead");
-const flowLine=document.getElementById("flowLine");
-const surpriseText=document.getElementById("surpriseText");
-const unlockLink=document.getElementById("unlockLink");
-const unlockNote=document.getElementById("unlockNote");
+const answerText=document.getElementById("answerText");
+const opportunityList=document.getElementById("opportunityList");
+const secretText=document.getElementById("secretText");
+const specificLink=document.getElementById("specificLink");
+const workflowLink=document.getElementById("workflowLink");
 
 function esc(s){
   return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
+}
+
+function sentenceCaseTitle(title){
+  return String(title||"this work").replace(/\s*→\s*/g," to ").toLowerCase();
 }
 
 function showWorkflow(){
@@ -129,23 +130,25 @@ function showWorkflow(){
   const wf=engine.match(q);
   if(!wf)return;
 
-  const shown=wf.steps.slice(0,4);
-  const hidden=Math.max(0,wf.steps.length-shown.length);
-  const unexpected=wf.steps.find(x=>x[2]==="integration" && /(weather|external|supplier|traffic|availability|live|stock|road|travel|delivery|leave|competenc|safety|compliance)/i.test(x[0]+" "+x[1])) || wf.steps[4] || wf.steps[wf.steps.length-1];
+  const opportunities=Array.isArray(wf.opportunities)&&wf.opportunities.length
+    ? wf.opportunities.slice(0,10)
+    : wf.steps.slice(0,8).map(x=>x[0]);
+
+  const unexpected=wf.secret
+    || (wf.steps.find(x=>x[2]==="integration" && /(weather|external|supplier|traffic|availability|live|stock|road|travel|delivery|leave|competenc|safety|compliance|policy|terms)/i.test(x[0]+" "+x[1]))||wf.steps[4]||wf.steps[wf.steps.length-1]);
 
   resultLabel.textContent="You searched · "+q;
   resultTitle.textContent=wf.title;
-  resultLead.textContent=wf.promise;
+  answerText.textContent=wf.answer||("AI can work independently and alongside people to complete many of the tasks involved in "+sentenceCaseTitle(wf.title)+".");
+  opportunityList.innerHTML=opportunities.map(x=>"<li>"+esc(x)+"</li>").join("");
+  secretText.textContent=typeof unexpected==="string"
+    ? unexpected
+    : unexpected
+      ? unexpected[0]+": "+unexpected[1]
+      : "AI may also be able to monitor the external conditions, rules or information that affect this work and flag relevant changes.";
 
-  flowLine.innerHTML=shown.map((step,i)=>{
-    const node='<span class="flow-node">'+esc(step[0])+'</span>';
-    const arrow=i<shown.length-1?'<span class="flow-arrow">→</span>':'';
-    return node+arrow;
-  }).join("")+(hidden?'<span class="flow-arrow">→</span><span class="flow-more">+'+hidden+' more</span>':'');
-
-  surpriseText.textContent=unexpected ? unexpected[0]+": "+unexpected[1] : "There may be useful information, dependencies or conditions sitting outside the task you searched.";
-  unlockNote.textContent=wf.steps.length+" stages found.";
-  unlockLink.href="contact.html?source=ai-workflow-unlock&task="+encodeURIComponent(q)+"&workflow="+encodeURIComponent(wf.title);
+  specificLink.href="contact.html?source=ai-specific&task="+encodeURIComponent(q)+"&workflow="+encodeURIComponent(wf.title);
+  workflowLink.href="contact.html?source=ai-workflow-unlock&task="+encodeURIComponent(q)+"&workflow="+encodeURIComponent(wf.title);
 
   result.hidden=false;
   result.scrollIntoView({behavior:"smooth",block:"start"});
