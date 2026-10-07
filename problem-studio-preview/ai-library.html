@@ -20,7 +20,18 @@
     .ai-input{min-height:66px;width:100%;border:1px solid var(--line);border-bottom:2px solid var(--ink);background:rgba(255,255,255,.55);padding:14px 18px;font:italic clamp(1.15rem,2vw,1.45rem)/1.3 var(--serif);color:var(--ink)}
     .ai-input:focus{outline:2px solid var(--accent);outline-offset:3px}
     .ai-submit{min-width:150px}
+    .search-guide{max-width:650px;margin:0 0 18px;color:var(--graph);font-size:.9rem;line-height:1.5}
+    .search-guide strong{color:var(--ink)}
     .example{margin-top:11px;font-size:.76rem;color:var(--graph)}
+    .clarify{border-top:1px solid var(--line);padding:34px 0;background:rgba(255,255,255,.22)}
+    .clarify[hidden]{display:none}
+    .clarify .wrap{max-width:900px}
+    .clarify h2{font-size:clamp(1.7rem,4vw,2.7rem);margin:7px 0 14px;letter-spacing:-.035em}
+    .clarify p{margin:0 0 16px;color:var(--graph)}
+    .clarify-options{display:flex;gap:9px;flex-wrap:wrap}
+    .clarify-option{border:1px solid var(--ink);background:transparent;padding:10px 12px;cursor:pointer;font:600 .58rem var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .clarify-option:hover{background:var(--ink);color:var(--paper)}
+    .clarify-help{margin-top:14px!important;font-size:.78rem!important}
     .result{border-top:1px solid var(--ink);padding:clamp(42px,7vw,74px) 0 clamp(58px,8vw,92px);background:rgba(255,255,255,.28)}
     .result[hidden]{display:none}
     .result-label{font:600 .57rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
@@ -65,11 +76,22 @@
       <div class="micro">AI × Business</div>
       <h1>Can AI<br><em>do this?</em></h1>
       <p class="lead">Tell us one thing you do at work.</p>
+      <p class="search-guide"><strong>The more specific you are, the more specific we can be.</strong> Searching for a task works best.<br>Broad: <em>Managing staff</em> → Better: <em>Scheduling staff around leave and job demand</em></p>
       <div class="search-row">
         <input id="workflowSearch" class="ai-input" type="search" autocomplete="off" aria-label="One thing you do at work" placeholder="e.g. social media">
         <button id="workflowSubmit" class="btn primary ai-submit" type="button">Show me</button>
       </div>
       <div class="example">Try: social media · client emails · staff scheduling · quoting · site visits</div>
+    </div>
+  </section>
+
+  <section id="clarifyPanel" class="clarify" hidden>
+    <div class="wrap">
+      <div class="result-label">Let’s narrow that down</div>
+      <h2>Did you mean…?</h2>
+      <p id="clarifyQuestion"></p>
+      <div id="clarifyOptions" class="clarify-options"></div>
+      <p class="clarify-help">Not quite? Add the specific task or outcome you mean and search again.</p>
     </div>
   </section>
 
@@ -108,6 +130,9 @@ const engine=window.AI_WORKFLOW_ENGINE||null;
 const search=document.getElementById("workflowSearch");
 const submit=document.getElementById("workflowSubmit");
 const result=document.getElementById("workflowResult");
+const clarifyPanel=document.getElementById("clarifyPanel");
+const clarifyQuestion=document.getElementById("clarifyQuestion");
+const clarifyOptions=document.getElementById("clarifyOptions");
 const resultLabel=document.getElementById("resultLabel");
 const resultTitle=document.getElementById("resultTitle");
 const answerText=document.getElementById("answerText");
@@ -124,12 +149,7 @@ function sentenceCaseTitle(title){
   return String(title||"this work").replace(/\s*→\s*/g," to ").toLowerCase();
 }
 
-function showWorkflow(){
-  const q=search.value.trim();
-  if(!q||!engine)return;
-  const wf=engine.match(q);
-  if(!wf)return;
-
+function renderResult(q,wf){
   const opportunities=Array.isArray(wf.opportunities)&&wf.opportunities.length
     ? wf.opportunities.slice(0,10)
     : wf.steps.slice(0,8).map(x=>x[0]);
@@ -150,11 +170,44 @@ function showWorkflow(){
   specificLink.href="contact.html?source=ai-specific&task="+encodeURIComponent(q)+"&workflow="+encodeURIComponent(wf.title);
   workflowLink.href="contact.html?source=ai-workflow-unlock&task="+encodeURIComponent(q)+"&workflow="+encodeURIComponent(wf.title);
 
+  clarifyPanel.hidden=true;
   result.hidden=false;
   result.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
+function showWorkflow(){
+  const q=search.value.trim();
+  if(!q||!engine)return;
+  const interpreted=engine.interpret ? engine.interpret(q) : null;
+  if(!interpreted)return;
+
+  if(interpreted.type==="match"){
+    renderResult(q,interpreted.workflow);
+    return;
+  }
+
+  result.hidden=true;
+  clarifyQuestion.textContent="We don’t want to guess what you mean by “"+q+"”.";
+  if(interpreted.suggestions&&interpreted.suggestions.length){
+    clarifyOptions.innerHTML=interpreted.suggestions.map(wf=>
+      '<button class="clarify-option" type="button" data-workflow-id="'+esc(wf.id)+'">'+esc(wf.title)+'</button>'
+    ).join("");
+  }else{
+    clarifyOptions.innerHTML="";
+  }
+  clarifyPanel.hidden=false;
+  clarifyPanel.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
 submit.addEventListener("click",showWorkflow);
+clarifyOptions.addEventListener("click",e=>{
+  const button=e.target.closest(".clarify-option");
+  if(!button)return;
+  const wf=engine.templates.find(x=>x.id===button.dataset.workflowId);
+  if(!wf)return;
+  search.value=wf.title;
+  renderResult(wf.title,wf);
+});
 search.addEventListener("keydown",e=>{
   if(e.key==="Enter"){
     e.preventDefault();
