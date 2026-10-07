@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en-AU">
 <head>
-  <title>Can AI Do This? | AI Workflow Library | Lillith Problem Studio</title>
-  <meta name="description" content="Search one piece of work and discover the larger workflow around it: what AI could handle, what needs integration or business context, and where people still belong.">
+  <title>Can AI Do This? | Lillith Problem Studio</title>
+  <meta name="description" content="Tell us one thing you do at work. We will show you the workflow AI could potentially handle around it.">
   <meta name="robots" content="noindex,nofollow">
   <meta charset="utf-8">
   <meta name="theme-color" content="#f5f3ee">
@@ -11,479 +11,154 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="page.css">
   <style>
-    .library-hero{padding-bottom:48px}
-    .library-search-wrap{margin-top:38px;max-width:880px}
-    .library-search{width:100%;min-height:64px;border:1px solid var(--line);border-bottom:2px solid var(--ink);background:rgba(255,255,255,.52);padding:14px 18px;font:italic clamp(1.25rem,2vw,1.65rem)/1.3 var(--serif);color:var(--ink)}
-    .library-search:focus{outline:2px solid var(--accent);outline-offset:3px}
-    .library-meta{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0 0}
-    .library-count{font:600 .6rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--graph)}
-    .library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:28px}
-    .task{border:1px solid var(--line);background:rgba(255,255,255,.38);min-width:0}
-    .task summary{list-style:none;cursor:pointer;padding:22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
-    .task summary::-webkit-details-marker{display:none}
-    .task summary:hover{background:rgba(83,110,114,.06)}
-    .task[open] summary{background:rgba(83,110,114,.07);border-bottom:1px solid var(--line)}
-    .task-title{font-size:1.3rem;line-height:1.15;letter-spacing:-.025em;margin:5px 0 0}
-    .task-cat{font:600 .58rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
-    .task-cue{font:600 .58rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
-    .task-cue::after{content:" +";font-size:.85rem}
-    .task[open] .task-cue::after{content:" ×"}
-    .task-body{padding:22px}
-    .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-    .score{border:1px solid var(--line);padding:14px;background:rgba(251,250,247,.62)}
-    .score-label{font:600 .55rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--graph)}
-    .score-value{font-size:1.55rem;line-height:1.1;margin-top:5px}
-    .score-value small{font:600 .62rem var(--mono);color:var(--accent);letter-spacing:.05em}
-    .task-body h4{font:600 .57rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin:20px 0 6px}
-    .task-body p{margin:0;color:var(--graph)}
-    .readiness{display:inline-flex;align-items:center;border:1px solid var(--line);padding:7px 9px;margin-top:18px;font:600 .56rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
-    .playbook{display:flex;justify-content:space-between;gap:18px;align-items:center;border-top:1px solid var(--line);margin-top:22px;padding-top:18px}
-    .playbook p{font-size:.88rem;max-width:46ch}
-    .mini-btn{flex:0 0 auto;min-height:42px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--ink);padding:8px 12px;text-decoration:none;font:600 .58rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
-    .mini-btn:hover{background:var(--ink);color:var(--paper)}
-    .empty{border-top:1px solid var(--line);padding:36px 0;color:var(--graph)}
-    .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:34px}
-    .principle{border-top:1px solid var(--ink);padding-top:14px}
-    .principle strong{font-size:1rem}
-    .principle p{font-size:.86rem;color:var(--graph);margin:8px 0 0}
-    .callout-strong{font:italic clamp(1.35rem,2.6vw,2rem)/1.45 var(--serif);max-width:34ch;margin:0;color:var(--graph)}
-    .discovery-link{display:inline-flex;align-items:center;gap:10px;margin-top:18px;font:600 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--line);padding:8px 0}
-    .discovery-link:hover{color:var(--accent);border-bottom-color:var(--accent)}
-    .blindspot{background:rgba(255,255,255,.28)}
-    .activity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:30px}
-    .activity{min-height:90px;border:1px solid var(--line);background:rgba(255,255,255,.45);padding:15px;text-align:left;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
-    .activity:hover{transform:translateY(-1px);border-color:var(--accent);background:rgba(83,110,114,.06)}
-    .activity[aria-pressed="true"]{border-color:var(--accent);background:rgba(83,110,114,.09)}
-    .activity strong{display:block;font-size:.96rem;line-height:1.2}
-    .activity span{display:block;margin-top:6px;font-size:.78rem;line-height:1.4;color:var(--graph)}
-    .blindspot-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
-    .blindspot-results{margin-top:36px}
-    .blindspot-results[hidden]{display:none}
-    .blindspot-results h3{font-size:1.5rem;line-height:1.15;margin:0 0 6px}
-    .blindspot-results>p{color:var(--graph);margin:0 0 20px}
-    .blindspot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .blindspot-card{border:1px solid var(--line);padding:18px;background:rgba(251,250,247,.66)}
-    .blindspot-card .task-cat{margin-bottom:6px}
-    .blindspot-card strong{font-size:1.05rem;line-height:1.2}
-    .blindspot-card p{font-size:.84rem;color:var(--graph);margin:8px 0 0}
-    .blindspot-card a{display:inline-flex;margin-top:12px;font:600 .57rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-    .small-note{font-size:.82rem;color:var(--graph);max-width:65ch}
-    .search-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
-    .search-hint{font-size:.78rem;color:var(--graph)}
-    .workflow-result{background:linear-gradient(180deg,rgba(255,255,255,.52),rgba(255,255,255,.18))}
-    .workflow-result[hidden]{display:none}
-    .workflow-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr);gap:44px;align-items:end}
-    .query-label{font:600 .58rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
-    .workflow-title{font-size:clamp(2rem,5vw,4.2rem);line-height:.94;letter-spacing:-.05em;margin:10px 0 16px}
-    .workflow-promise{font:italic clamp(1.15rem,2vw,1.55rem)/1.45 var(--serif);color:var(--graph);max-width:38ch}
-    .workflow-summary{border-top:1px solid var(--ink);padding-top:14px}
-    .workflow-summary strong{display:block;font-size:1.8rem;line-height:1}
-    .workflow-summary span{display:block;margin-top:6px;font-size:.82rem;color:var(--graph)}
-    .flow-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px}
-    .flow-step{border:1px solid var(--line);background:rgba(251,250,247,.7);padding:17px;min-height:190px;display:flex;flex-direction:column}
-    .flow-step-num{font:600 .56rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
-    .flow-step h3{font-size:1.05rem;line-height:1.15;margin:24px 0 8px}
-    .flow-step p{font-size:.82rem;line-height:1.5;color:var(--graph);margin:0 0 16px}
-    .status-pill{margin-top:auto;align-self:flex-start;border:1px solid var(--line);padding:6px 8px;font:600 .52rem var(--mono);letter-spacing:.07em;text-transform:uppercase}
-    .workflow-tease{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-    .tease-card{border:1px solid var(--line);padding:20px;background:rgba(255,255,255,.4)}
-    .tease-card h3{font-size:1.05rem;margin:0 0 8px}
-    .tease-card p{font-size:.86rem;color:var(--graph);margin:0}
-    .hidden-stage-list{margin-top:13px;font:600 .58rem/1.7 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--graph)}
-    .unlock-row{display:flex;justify-content:space-between;gap:28px;align-items:center;border-top:1px solid var(--ink);margin-top:26px;padding-top:22px}
-    .unlock-row p{margin:0;max-width:60ch;color:var(--graph)}
-    .tier-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px}
-    .tier{border:1px solid var(--line);padding:22px;background:rgba(255,255,255,.34);display:flex;flex-direction:column;min-height:330px}
-    .tier.featured{border-color:var(--ink);background:rgba(83,110,114,.06)}
-    .tier-kicker{font:600 .55rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
-    .tier h3{font-size:1.35rem;margin:15px 0 8px}
-    .tier p{font-size:.86rem;color:var(--graph);margin:0 0 16px}
-    .tier ul{margin:0 0 20px;padding-left:17px;color:var(--graph);font-size:.82rem;line-height:1.55}
-    .tier .mini-btn{margin-top:auto;align-self:flex-start}
-    .connection-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-    .connection-strip span{border:1px solid var(--line);padding:6px 8px;font:600 .52rem var(--mono);letter-spacing:.05em;text-transform:uppercase}
-    .preview-note{font-size:.76rem;color:var(--graph);margin-top:12px}
-    @media(max-width:1050px){.flow-grid,.tier-grid{grid-template-columns:1fr 1fr}.workflow-head{grid-template-columns:1fr}.workflow-tease{grid-template-columns:1fr}}
-    @media(max-width:900px){.activity-grid{grid-template-columns:1fr 1fr}.blindspot-grid{grid-template-columns:1fr 1fr}}
-    @media(max-width:620px){.activity-grid,.blindspot-grid{grid-template-columns:1fr}}
-    @media(max-width:900px){.library-grid,.principles{grid-template-columns:1fr 1fr}}
-    @media(max-width:620px){.library-grid,.principles,.score-grid{grid-template-columns:1fr}.task summary,.task-body{padding:18px}.playbook{align-items:flex-start;flex-direction:column}}
+    .ai-page{min-height:calc(100vh - 80px)}
+    .ai-hero{padding:clamp(72px,12vw,150px) 0 clamp(64px,10vw,120px)}
+    .ai-hero .wrap{max-width:980px}
+    .ai-hero h1{margin:10px 0 24px;font-size:clamp(4rem,11vw,9rem);line-height:.82;letter-spacing:-.07em}
+    .ai-hero .lead{max-width:24ch;margin:0 0 34px;font-size:clamp(1.2rem,2.3vw,1.65rem)}
+    .search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;max-width:850px}
+    .ai-input{min-height:68px;width:100%;border:1px solid var(--line);border-bottom:2px solid var(--ink);background:rgba(255,255,255,.55);padding:15px 18px;font:italic clamp(1.2rem,2vw,1.55rem)/1.3 var(--serif);color:var(--ink)}
+    .ai-input:focus{outline:2px solid var(--accent);outline-offset:3px}
+    .ai-submit{min-width:170px}
+    .example{margin-top:12px;font-size:.78rem;color:var(--graph)}
+    .result{border-top:1px solid var(--ink);padding:clamp(40px,7vw,72px) 0 clamp(54px,8vw,90px);background:rgba(255,255,255,.28)}
+    .result[hidden]{display:none}
+    .result .wrap{max-width:980px}
+    .result-label{font:600 .58rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+    .result h2{font-size:clamp(2.2rem,6vw,5rem);line-height:.95;letter-spacing:-.05em;margin:10px 0 18px}
+    .result-lead{font:italic clamp(1.2rem,2.5vw,1.7rem)/1.45 var(--serif);max-width:34ch;margin:0 0 34px;color:var(--graph)}
+    .flow-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 30px}
+    .flow-node{border:1px solid var(--line);background:rgba(251,250,247,.76);padding:9px 11px;font:600 .58rem var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .flow-arrow{color:var(--accent);font-size:.9rem}
+    .flow-more{font:600 .58rem var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+    .surprise{max-width:720px;border-left:2px solid var(--accent);padding:2px 0 2px 18px;margin:0 0 30px}
+    .surprise small{display:block;font:600 .55rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+    .surprise p{margin:0;color:var(--graph);font-size:.95rem;line-height:1.55}
+    .unlock{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .unlock-note{font-size:.8rem;color:var(--graph)}
+    .quiet-link{font:600 .57rem var(--mono);letter-spacing:.07em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
+    .mini-footer{padding:26px 0;border-top:1px solid var(--line);font-size:.72rem;color:var(--graph)}
+    .mini-footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .mini-footer a{color:inherit}
+    @media(max-width:700px){
+      .search-row{grid-template-columns:1fr}
+      .ai-submit{width:100%}
+      .ai-hero h1{font-size:clamp(3.6rem,19vw,6rem)}
+      .flow-arrow{display:none}
+      .flow-line{gap:7px}
+    }
   </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
+
 <header class="topbar">
   <a class="wordmark" href="index.html"><span></span>Lillith <b>Problem Studio</b></a>
   <nav>
     <a href="problems.html">Problems</a>
     <a href="diagnostic.html">Diagnostic</a>
     <a href="insights.html">Insights</a>
-    <a href="glossary.html">Glossary</a>
     <a href="how-we-work.html">How we work</a>
     <a class="navcta" href="contact.html">Bring us the problem</a>
   </nav>
 </header>
 
-<main id="main">
-  <section class="hero library-hero">
+<main id="main" class="ai-page">
+  <section class="ai-hero">
     <div class="wrap">
-      <div class="micro">AI × Business Workflow Library</div>
-      <h1 class="display">Can AI<br><em>do this?</em></h1>
-      <p class="lead">Search one thing you do at work. We will show you the workflow around it — including the parts you probably did not think to ask about.</p>
-      <p class="intro">The task is only the entry point. We look upstream, downstream and outside the business for information, decisions, integrations, delays and human boundaries that shape the whole workflow.</p>
-      <a class="discovery-link" href="#blindspot">Not sure what to search? Show me what I might be missing →</a>
-
-      <div class="library-search-wrap">
-        <label class="micro" for="taskSearch">What are you trying to do?</label>
-        <input id="taskSearch" class="library-search" type="search" autocomplete="off" placeholder="e.g. client emails, staff scheduling, quoting, site visits…">
-        <div class="search-actions">
-          <button id="exploreWorkflow" class="btn primary" type="button">Show me the workflow</button>
-          <span class="search-hint">Start with the thing you can see. We will expand around it.</span>
-        </div>
-        <div class="library-meta">
-          <div id="count" class="library-count" aria-live="polite"></div>
-          <div class="filters" id="filters" aria-label="Filter business tasks"></div>
-        </div>
+      <div class="micro">AI × Business</div>
+      <h1>Can AI<br><em>do this?</em></h1>
+      <p class="lead">Tell us one thing you do at work.</p>
+      <div class="search-row">
+        <input id="workflowSearch" class="ai-input" type="search" autocomplete="off" aria-label="One thing you do at work" placeholder="e.g. client emails">
+        <button id="workflowSubmit" class="btn primary ai-submit" type="button">Show me</button>
       </div>
+      <div class="example">Try: client emails · staff scheduling · quoting · site visits · material supply</div>
     </div>
   </section>
 
-  <section class="section workflow-result" id="workflowResult" hidden>
+  <section id="workflowResult" class="result" hidden>
     <div class="wrap">
-      <div class="workflow-head">
-        <div>
-          <div id="workflowQuery" class="query-label"></div>
-          <h2 id="workflowTitle" class="workflow-title"></h2>
-          <p id="workflowPromise" class="workflow-promise"></p>
-        </div>
-        <div class="workflow-summary">
-          <strong id="workflowCount"></strong>
-          <span id="workflowCountNote"></span>
-          <div id="workflowConnections" class="connection-strip"></div>
-        </div>
+      <div id="resultLabel" class="result-label"></div>
+      <h2 id="resultTitle"></h2>
+      <p id="resultLead" class="result-lead"></p>
+
+      <div id="flowLine" class="flow-line" aria-label="Workflow preview"></div>
+
+      <div class="surprise">
+        <small>You may not have considered</small>
+        <p id="surpriseText"></p>
       </div>
 
-      <div id="workflowFreeSteps" class="flow-grid"></div>
-
-      <div class="workflow-tease">
-        <div class="tease-card">
-          <div class="micro">What you did not ask about</div>
-          <h3 id="workflowBlindspotTitle">The surrounding conditions</h3>
-          <p id="workflowBlindspot"></p>
-        </div>
-        <div class="tease-card">
-          <div class="micro">Still inside this workflow</div>
-          <h3 id="workflowLockedCount"></h3>
-          <p>The full workflow continues through the decisions, integrations, monitoring and human boundaries that sit beyond the visible task.</p>
-          <div id="workflowLockedTitles" class="hidden-stage-list"></div>
-        </div>
-      </div>
-
-      <div class="unlock-row">
-        <div>
-          <div class="micro">Full workflow</div>
-          <p>Unlock the complete workflow map, all capability stages, dependencies, external intelligence, business-context requirements and human control points.</p>
-          <div class="preview-note">Preview build: authentication, subscription and payment infrastructure are not connected yet.</div>
-        </div>
-        <a id="unlockWorkflow" class="btn primary" href="contact.html?source=ai-workflow-unlock">Unlock this workflow</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section blindspot" id="blindspot">
-    <div class="wrap split">
-      <div>
-        <div class="micro">AI blindspot scan</div>
-        <h2>You do not need to know<br><em>what to ask for.</em></h2>
-      </div>
-      <div>
-        <p class="lead" style="margin-top:0">Tell us what kind of work keeps happening. We will show you workflows where AI may be able to absorb, assist with or coordinate much more than the visible task.</p>
-        <p class="small-note">Choose the work patterns that genuinely occur in your business. This is about what people do now — not what you think AI should do.</p>
-      </div>
-    </div>
-    <div class="wrap">
-      <div id="activityGrid" class="activity-grid" aria-label="Select work patterns"></div>
-      <div class="blindspot-actions">
-        <button id="showBlindspots" class="btn primary" type="button">Show me what I might be missing</button>
-        <button id="clearBlindspots" class="btn" type="button">Clear</button>
-      </div>
-      <div id="blindspotResults" class="blindspot-results" hidden>
-        <h3>Possible AI opportunities hiding inside that work</h3>
-        <p>These are prompts to investigate, not automatic recommendations. Whether they fit your business depends on access, context, risk and authority.</p>
-        <div id="blindspotGrid" class="blindspot-grid"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap">
-      <div class="micro">Browse starting points</div>
-      <div id="taskGrid" class="library-grid"></div>
-      <div id="empty" class="empty" hidden>No matching task yet. Try describing the work more simply.</div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap split">
-      <div>
-        <div class="micro">How we judge it</div>
-        <h2>Capability is not<br><em>the same as suitability.</em></h2>
-      </div>
-      <div>
-        <p class="callout-strong">“Can AI do this?” and “Could AI do this in my business?” are different questions.</p>
-        <div class="principles">
-          <div class="principle"><strong>Can</strong><p>Technical capability: can current AI perform meaningful parts of the task?</p></div>
-          <div class="principle"><strong>Could</strong><p>Practical fit: is this commonly workable once access, context, controls and authority are considered?</p></div>
-          <div class="principle"><strong>Boundary</strong><p>What still needs a person, approval, accountability or real-world action?</p></div>
-          <div class="principle"><strong>Readiness</strong><p>AI-ready, AI-adjacent, human-led, human-required, or simply not worth automating.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="access">
-    <div class="wrap split">
-      <div>
-        <div class="micro">Access expands with scope</div>
-        <h2>See one thing.<br><em>Then see the system.</em></h2>
-      </div>
-      <div>
-        <p class="intro">The free library proves the idea. Paid access expands how much of the workflow — and then how much of the business — the system can see.</p>
-        <p>No public pricing is shown here. Subscription and payment infrastructure are not connected in this preview.</p>
-      </div>
-    </div>
-    <div class="wrap">
-      <div class="tier-grid">
-        <article class="tier">
-          <div class="tier-kicker">Free · Discover</div>
-          <h3>See the possibility</h3>
-          <p>Start with the work you already know to ask about.</p>
-          <ul><li>Search any starting point</li><li>First workflow stages</li><li>Capability/readiness signals</li><li>One unexpected blindspot</li></ul>
-          <a class="mini-btn" href="#taskSearch">Try the library</a>
-        </article>
-        <article class="tier featured">
-          <div class="tier-kicker">Workflow · Unlock</div>
-          <h3>See the whole workflow</h3>
-          <p>Expand the visible task into the complete operating chain around it.</p>
-          <ul><li>Full workflow map</li><li>Upstream + downstream opportunities</li><li>External intelligence + integrations</li><li>Business context + human boundaries</li><li>Implementation sequence</li></ul>
-          <a class="mini-btn" href="contact.html?source=ai-workflow-access">Request workflow access</a>
-        </article>
-        <article class="tier">
-          <div class="tier-kicker">Business · Connect</div>
-          <h3>See across the business</h3>
-          <p>Save multiple workflows and expose the connections, duplication and shared capabilities between them.</p>
-          <ul><li>Connected workflow map</li><li>Cross-workflow dependencies</li><li>Shared data + capability opportunities</li><li>Unknown-unknown discovery</li><li>Business-wide AI opportunity map</li></ul>
-          <a class="mini-btn" href="contact.html?source=ai-business-map">Request business access</a>
-        </article>
-        <article class="tier">
-          <div class="tier-kicker">Problem Studio · Implement</div>
-          <h3>Make it real</h3>
-          <p>Turn the opportunity map into systems that work inside the actual business.</p>
-          <ul><li>Business calibration</li><li>Architecture + integration design</li><li>Governance + authority boundaries</li><li>Testing + implementation</li><li>Operational handoff</li></ul>
-          <a class="mini-btn" href="contact.html?source=ai-implementation">Talk about implementation</a>
-        </article>
+      <div class="unlock">
+        <a id="unlockLink" class="btn primary" href="contact.html?source=ai-workflow-unlock">See the full workflow</a>
+        <span id="unlockNote" class="unlock-note"></span>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="footer">
-  <div class="wrap footgrid">
-    <div><strong>Lillith Problem Studio</strong><p>Independent problem-solving for complex, cross-functional problems.</p></div>
-    <div><a href="problems.html">Problems</a><a href="diagnostic.html">Diagnostic</a><a href="insights.html">Insights</a><a href="glossary.html">Glossary</a><a href="how-we-work.html">How we work</a><a href="contact.html">Contact</a></div>
-    <div><a href="terms.html">Website terms</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="accessibility.html">Accessibility</a></div>
+<footer class="mini-footer">
+  <div class="wrap">
+    <span>Lillith Problem Studio · Australia</span>
+    <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="contact.html">Contact</a></span>
   </div>
-  <div class="wrap legal">Lillith Problem Studio · Australia · Trading structure and legal entity details to be verified before production launch.</div>
 </footer>
 
-<script src="ai-library-data.js"></script>
 <script src="ai-workflow-engine.js"></script>
 <script>
-const TASKS = Array.isArray(window.AI_TASKS) ? window.AI_TASKS : [];
-const WORKFLOW_ENGINE = window.AI_WORKFLOW_ENGINE || null;
+const engine=window.AI_WORKFLOW_ENGINE||null;
+const search=document.getElementById("workflowSearch");
+const submit=document.getElementById("workflowSubmit");
+const result=document.getElementById("workflowResult");
+const resultLabel=document.getElementById("resultLabel");
+const resultTitle=document.getElementById("resultTitle");
+const resultLead=document.getElementById("resultLead");
+const flowLine=document.getElementById("flowLine");
+const surpriseText=document.getElementById("surpriseText");
+const unlockLink=document.getElementById("unlockLink");
+const unlockNote=document.getElementById("unlockNote");
 
-const WORK_PATTERNS = [
-  {id:"reply",title:"Writing, replying and explaining",note:"Emails, customer responses, proposals, announcements, recurring explanations.",terms:["email","support","complaint","proposal","announcement","microcopy","job descriptions","customer"]},
-  {id:"find",title:"Finding information",note:"Searching policies, records, documents, previous work or answers held across the business.",terms:["find information","policies","earnings-call","competitor","research","knowledge"]},
-  {id:"check",title:"Checking, reviewing and QA",note:"Reviewing documents, work, transactions, contracts, compliance or outputs before they go out.",terms:["review","qa","contract","fraud","policy","reconcile","risk"]},
-  {id:"chase",title:"Chasing and following up",note:"Invoices, leads, tickets, approvals, missing information or work waiting on someone.",terms:["chase","follow up","tickets","lead","invoice","workflow"]},
-  {id:"meetings",title:"Turning conversations into work",note:"Meetings, voice notes, transcripts, decisions, actions and handovers.",terms:["meeting","voice notes","presentation","minutes","transcript"]},
-  {id:"plan",title:"Planning and organising",note:"Timelines, budgets, schedules, campaigns, launches, agendas and resource planning.",terms:["timeline","budget","schedule","calendar","campaign","launch","agenda","forecast"]},
-  {id:"data",title:"Working with spreadsheets or data",note:"Cleaning, comparing, querying, reporting, spotting patterns and building models.",terms:["csv","spreadsheet","sql","data","forecast","report","sentiment","churn"]},
-  {id:"train",title:"Training people and answering repeat questions",note:"Onboarding, procedures, how-we-do-things knowledge and staff support.",terms:["onboarding","train","staff questions","sop","policy manuals","job descriptions"]},
-  {id:"decide",title:"Making the same kinds of decisions repeatedly",note:"Qualification, approvals, prioritisation, routing, triage and threshold decisions.",terms:["qualify","approve","prioritise","triage","decision","inventory","procurement"]},
-  {id:"create",title:"Creating first drafts from existing information",note:"Documents, plans, copy, policies, specifications, presentations and structured outputs.",terms:["draft","write","create","build","product specification","business plan"]},
-  {id:"monitor",title:"Watching for changes, exceptions or delays",note:"Workflows, stock, service queues, anomalies, performance and things that need escalation.",terms:["monitor","inventory","tickets","fraud","churn","ad spend","workflow"]},
-  {id:"analyse",title:"Comparing, analysing and finding patterns",note:"Customer feedback, competitors, pricing, risk, financials, surveys and performance.",terms:["analyse","assess","compare","risk","sentiment","survey","pricing","competitor","optimise"]}
-];
-
-const activityGrid=document.getElementById("activityGrid");
-const blindspotResults=document.getElementById("blindspotResults");
-const blindspotGrid=document.getElementById("blindspotGrid");
-const showBlindspots=document.getElementById("showBlindspots");
-const clearBlindspots=document.getElementById("clearBlindspots");
-const selectedPatterns=new Set();
-
-const workflowResult=document.getElementById("workflowResult");
-const workflowQuery=document.getElementById("workflowQuery");
-const workflowTitle=document.getElementById("workflowTitle");
-const workflowPromise=document.getElementById("workflowPromise");
-const workflowCount=document.getElementById("workflowCount");
-const workflowCountNote=document.getElementById("workflowCountNote");
-const workflowConnections=document.getElementById("workflowConnections");
-const workflowFreeSteps=document.getElementById("workflowFreeSteps");
-const workflowBlindspot=document.getElementById("workflowBlindspot");
-const workflowLockedCount=document.getElementById("workflowLockedCount");
-const workflowLockedTitles=document.getElementById("workflowLockedTitles");
-const unlockWorkflow=document.getElementById("unlockWorkflow");
-const exploreWorkflow=document.getElementById("exploreWorkflow");
-
-function renderWorkflow(query){
-  const q=String(query||"").trim();
-  if(!q || !WORKFLOW_ENGINE) return;
-  const wf=WORKFLOW_ENGINE.match(q);
-  if(!wf) return;
-  const freeCount=Math.min(4,wf.steps.length);
-  const shown=wf.steps.slice(0,freeCount);
-  const hidden=wf.steps.slice(freeCount);
-  workflowQuery.textContent="You searched · "+q;
-  workflowTitle.textContent=wf.title;
-  workflowPromise.textContent=wf.promise;
-  workflowCount.textContent=wf.steps.length+" stages found";
-  workflowCountNote.textContent=freeCount+" shown free · "+hidden.length+" remain in the full workflow";
-  workflowConnections.innerHTML=(wf.connections||[]).map(x=>"<span>"+esc(x)+"</span>").join("");
-  workflowFreeSteps.innerHTML=shown.map((step,i)=>{
-    const status=WORKFLOW_ENGINE.STATUS[step[2]]||WORKFLOW_ENGINE.STATUS.context;
-    return `<article class="flow-step"><div class="flow-step-num">Stage ${i+1}</div><h3>${esc(step[0])}</h3><p>${esc(step[1])}</p><div class="status-pill">${esc(status.label)}</div></article>`;
-  }).join("");
-  const external=wf.steps.find(x=>x[2]==="integration" && /(weather|external|supplier|traffic|availability|live|stock|road|travel|delivery)/i.test(x[0]+" "+x[1])) || hidden[0] || wf.steps[wf.steps.length-1];
-  workflowBlindspot.textContent=external ? external[0]+": "+external[1] : "The surrounding workflow may contain information, dependencies and conditions that were not visible in the task you searched.";
-  workflowLockedCount.textContent=hidden.length+" more stages identified";
-  workflowLockedTitles.textContent=hidden.slice(0,3).map(x=>x[0]).join(" · ")+(hidden.length>3?" · +"+(hidden.length-3)+" more":"");
-  unlockWorkflow.href="contact.html?source=ai-workflow-unlock&task="+encodeURIComponent(q)+"&workflow="+encodeURIComponent(wf.title);
-  workflowResult.hidden=false;
-  workflowResult.scrollIntoView({behavior:"smooth",block:"start"});
+function esc(s){
+  return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
 }
 
-function renderPatterns(){
-  activityGrid.innerHTML=WORK_PATTERNS.map(p=>`
-    <button class="activity" type="button" data-id="${p.id}" aria-pressed="${selectedPatterns.has(p.id)}">
-      <strong>${p.title}</strong><span>${p.note}</span>
-    </button>`).join("");
+function showWorkflow(){
+  const q=search.value.trim();
+  if(!q||!engine)return;
+  const wf=engine.match(q);
+  if(!wf)return;
+
+  const shown=wf.steps.slice(0,4);
+  const hidden=Math.max(0,wf.steps.length-shown.length);
+  const unexpected=wf.steps.find(x=>x[2]==="integration" && /(weather|external|supplier|traffic|availability|live|stock|road|travel|delivery|leave|competenc|safety|compliance)/i.test(x[0]+" "+x[1])) || wf.steps[4] || wf.steps[wf.steps.length-1];
+
+  resultLabel.textContent="You searched · "+q;
+  resultTitle.textContent=wf.title;
+  resultLead.textContent=wf.promise;
+
+  flowLine.innerHTML=shown.map((step,i)=>{
+    const node='<span class="flow-node">'+esc(step[0])+'</span>';
+    const arrow=i<shown.length-1?'<span class="flow-arrow">→</span>':'';
+    return node+arrow;
+  }).join("")+(hidden?'<span class="flow-arrow">→</span><span class="flow-more">+'+hidden+' more</span>':'');
+
+  surpriseText.textContent=unexpected ? unexpected[0]+": "+unexpected[1] : "There may be useful information, dependencies or conditions sitting outside the task you searched.";
+  unlockNote.textContent=wf.steps.length+" stages found.";
+  unlockLink.href="contact.html?source=ai-workflow-unlock&task="+encodeURIComponent(q)+"&workflow="+encodeURIComponent(wf.title);
+
+  result.hidden=false;
+  result.scrollIntoView({behavior:"smooth",block:"start"});
 }
-function opportunityScore(task,pattern){
-  const hay=[task.t,task.c,task.why,task.needs,task.boundary].join(" ").toLowerCase();
-  return pattern.terms.reduce((score,term)=>score+(hay.includes(term.toLowerCase())?1:0),0);
-}
-function showOpportunities(){
-  const patterns=WORK_PATTERNS.filter(p=>selectedPatterns.has(p.id));
-  if(!patterns.length){blindspotResults.hidden=false;blindspotGrid.innerHTML='<div class="blindspot-card"><strong>Choose at least one work pattern.</strong><p>We are looking for what people actually spend time doing.</p></div>';return;}
-  const ranked=TASKS.map(task=>({
-    task,
-    score:patterns.reduce((sum,p)=>sum+opportunityScore(task,p),0)
-  })).filter(x=>x.score>0).sort((a,b)=>b.score-a.score || b.task.could-a.task.could || b.task.can-a.task.can).slice(0,10);
-  blindspotResults.hidden=false;
-  blindspotGrid.innerHTML=ranked.map(({task})=>`
-    <div class="blindspot-card">
-      <div class="task-cat">${esc(task.c)} · ${esc(task.r)}</div>
-      <strong>${esc(task.t)}</strong>
-      <p>${esc(task.why)}</p>
-      <a href="#taskSearch" data-task="${esc(task.t)}">See the full task →</a>
-    </div>`).join("");
-  blindspotResults.scrollIntoView({behavior:"smooth",block:"start"});
-}
-activityGrid.addEventListener("click",e=>{
-  const btn=e.target.closest(".activity");
-  if(!btn)return;
-  const id=btn.dataset.id;
-  selectedPatterns.has(id)?selectedPatterns.delete(id):selectedPatterns.add(id);
-  renderPatterns();
+
+submit.addEventListener("click",showWorkflow);
+search.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    showWorkflow();
+  }
 });
-showBlindspots.addEventListener("click",showOpportunities);
-clearBlindspots.addEventListener("click",()=>{selectedPatterns.clear();renderPatterns();blindspotResults.hidden=true;blindspotGrid.innerHTML="";});
-blindspotGrid.addEventListener("click",e=>{
-  const a=e.target.closest("a[data-task]");
-  if(!a)return;
-  search.value=a.dataset.task;
-  active="All";
-  [...filters.children].forEach((el,i)=>el.setAttribute("aria-pressed",String(i===0)));
-  render();
-});
-renderPatterns();
-const categories=["All",...Array.from(new Set(TASKS.map(x=>x.c))).sort()];
-const grid=document.getElementById("taskGrid");
-const search=document.getElementById("taskSearch");
-const filters=document.getElementById("filters");
-const count=document.getElementById("count");
-const empty=document.getElementById("empty");
-let active="All";
-
-function scoreText(n){
-  if(n>=5)return "Very high";
-  if(n===4)return "High";
-  if(n===3)return "Conditional";
-  if(n===2)return "Low";
-  return "Very low";
-}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
-function render(){
-  const q=search.value.trim().toLowerCase();
-  const items=TASKS.filter(x=>{
-    const cat=active==="All"||x.c===active;
-    const hay=[x.t,x.c,x.why,x.needs,x.boundary,x.r].join(" ").toLowerCase();
-    return cat && (!q||hay.includes(q));
-  });
-  count.textContent=items.length+" task"+(items.length===1?"":"s")+" shown";
-  empty.hidden=items.length!==0;
-  grid.innerHTML=items.map(x=>`
-    <details class="task">
-      <summary>
-        <div><div class="task-cat">${esc(x.c)}</div><div class="task-title">${esc(x.t)}</div></div>
-        <div class="task-cue">Open</div>
-      </summary>
-      <div class="task-body">
-        <div class="score-grid">
-          <div class="score"><div class="score-label">Can AI do this?</div><div class="score-value">${x.can}/5 <small>${scoreText(x.can)}</small></div></div>
-          <div class="score"><div class="score-label">Could AI do this in a business?</div><div class="score-value">${x.could}/5 <small>${scoreText(x.could)}</small></div></div>
-        </div>
-        <h4>Why</h4><p>${esc(x.why)}</p>
-        <h4>What would need to be true</h4><p>${esc(x.needs)}</p>
-        <h4>Human / control boundary</h4><p>${esc(x.boundary)}</p>
-        <div class="readiness">${esc(x.r)}</div>
-        <div class="playbook">
-          <p>The implementation layer turns this general answer into a workflow for your systems, information, people and authority structure.</p>
-          <a class="mini-btn workflow-link" href="#workflowResult" data-workflow-task="${esc(x.t)}">Explore the workflow</a>
-        </div>
-      </div>
-    </details>`).join("");
-}
-categories.forEach(cat=>{
-  const b=document.createElement("button");
-  b.type="button";
-  b.className="filter";
-  b.textContent=cat;
-  b.setAttribute("aria-pressed",cat==="All"?"true":"false");
-  b.addEventListener("click",()=>{
-    active=cat;
-    [...filters.children].forEach(el=>el.setAttribute("aria-pressed",String(el===b)));
-    render();
-  });
-  filters.appendChild(b);
-});
-search.addEventListener("input",render);
-exploreWorkflow.addEventListener("click",()=>renderWorkflow(search.value));
-search.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();renderWorkflow(search.value);}});
-grid.addEventListener("click",e=>{
-  const a=e.target.closest(".workflow-link");
-  if(!a)return;
-  e.preventDefault();
-  search.value=a.dataset.workflowTask||"";
-  render();
-  renderWorkflow(search.value);
-});
-render();
 </script>
-<script src="glossary.js"></script>
 <script src="site-ui.js"></script>
 <script src="privacy-consent.js"></script>
 </body>
