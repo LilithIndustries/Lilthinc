@@ -47,6 +47,29 @@
     .principle strong{font-size:1rem}
     .principle p{font-size:.86rem;color:var(--graph);margin:8px 0 0}
     .callout-strong{font:italic clamp(1.35rem,2.6vw,2rem)/1.45 var(--serif);max-width:34ch;margin:0;color:var(--graph)}
+    .discovery-link{display:inline-flex;align-items:center;gap:10px;margin-top:18px;font:600 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--line);padding:8px 0}
+    .discovery-link:hover{color:var(--accent);border-bottom-color:var(--accent)}
+    .blindspot{background:rgba(255,255,255,.28)}
+    .activity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:30px}
+    .activity{min-height:90px;border:1px solid var(--line);background:rgba(255,255,255,.45);padding:15px;text-align:left;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+    .activity:hover{transform:translateY(-1px);border-color:var(--accent);background:rgba(83,110,114,.06)}
+    .activity[aria-pressed="true"]{border-color:var(--accent);background:rgba(83,110,114,.09)}
+    .activity strong{display:block;font-size:.96rem;line-height:1.2}
+    .activity span{display:block;margin-top:6px;font-size:.78rem;line-height:1.4;color:var(--graph)}
+    .blindspot-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
+    .blindspot-results{margin-top:36px}
+    .blindspot-results[hidden]{display:none}
+    .blindspot-results h3{font-size:1.5rem;line-height:1.15;margin:0 0 6px}
+    .blindspot-results>p{color:var(--graph);margin:0 0 20px}
+    .blindspot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .blindspot-card{border:1px solid var(--line);padding:18px;background:rgba(251,250,247,.66)}
+    .blindspot-card .task-cat{margin-bottom:6px}
+    .blindspot-card strong{font-size:1.05rem;line-height:1.2}
+    .blindspot-card p{font-size:.84rem;color:var(--graph);margin:8px 0 0}
+    .blindspot-card a{display:inline-flex;margin-top:12px;font:600 .57rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+    .small-note{font-size:.82rem;color:var(--graph);max-width:65ch}
+    @media(max-width:900px){.activity-grid{grid-template-columns:1fr 1fr}.blindspot-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:620px){.activity-grid,.blindspot-grid{grid-template-columns:1fr}}
     @media(max-width:900px){.library-grid,.principles{grid-template-columns:1fr 1fr}}
     @media(max-width:620px){.library-grid,.principles,.score-grid{grid-template-columns:1fr}.task summary,.task-body{padding:18px}.playbook{align-items:flex-start;flex-direction:column}}
   </style>
@@ -72,6 +95,7 @@
       <h1 class="display">Can AI<br><em>do this?</em></h1>
       <p class="lead">Search a normal business task. Get a straight answer about what AI can do, what would need to be true in a real business, and where a person still belongs.</p>
       <p class="intro">No “AI everywhere” sales pitch. Some work is AI-ready. Some is AI-adjacent. Some should stay human-led. The useful question is not whether AI is good or bad. It is where it creates real value without costing you control.</p>
+      <a class="discovery-link" href="#blindspot">Not sure what to search? Show me what I might be missing →</a>
 
       <div class="library-search-wrap">
         <label class="micro" for="taskSearch">What are you trying to do?</label>
@@ -80,6 +104,31 @@
           <div id="count" class="library-count" aria-live="polite"></div>
           <div class="filters" id="filters" aria-label="Filter business tasks"></div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section blindspot" id="blindspot">
+    <div class="wrap split">
+      <div>
+        <div class="micro">AI blindspot scan</div>
+        <h2>You do not need to know<br><em>what to ask for.</em></h2>
+      </div>
+      <div>
+        <p class="lead" style="margin-top:0">Tell us what kind of work keeps happening. We will show you tasks AI may already be able to absorb, assist with or accelerate.</p>
+        <p class="small-note">Choose the work patterns that genuinely occur in your business. This is about what people do now — not what you think AI should do.</p>
+      </div>
+    </div>
+    <div class="wrap">
+      <div id="activityGrid" class="activity-grid" aria-label="Select work patterns"></div>
+      <div class="blindspot-actions">
+        <button id="showBlindspots" class="btn primary" type="button">Show me what I might be missing</button>
+        <button id="clearBlindspots" class="btn" type="button">Clear</button>
+      </div>
+      <div id="blindspotResults" class="blindspot-results" hidden>
+        <h3>Possible AI opportunities hiding inside that work</h3>
+        <p>These are prompts to investigate, not automatic recommendations. Whether they fit your business depends on access, context, risk and authority.</p>
+        <div id="blindspotGrid" class="blindspot-grid"></div>
       </div>
     </div>
   </section>
@@ -137,6 +186,74 @@
 <script src="ai-library-data.js"></script>
 <script>
 const TASKS = Array.isArray(window.AI_TASKS) ? window.AI_TASKS : [];
+
+const WORK_PATTERNS = [
+  {id:"reply",title:"Writing, replying and explaining",note:"Emails, customer responses, proposals, announcements, recurring explanations.",terms:["email","support","complaint","proposal","announcement","microcopy","job descriptions","customer"]},
+  {id:"find",title:"Finding information",note:"Searching policies, records, documents, previous work or answers held across the business.",terms:["find information","policies","earnings-call","competitor","research","knowledge"]},
+  {id:"check",title:"Checking, reviewing and QA",note:"Reviewing documents, work, transactions, contracts, compliance or outputs before they go out.",terms:["review","qa","contract","fraud","policy","reconcile","risk"]},
+  {id:"chase",title:"Chasing and following up",note:"Invoices, leads, tickets, approvals, missing information or work waiting on someone.",terms:["chase","follow up","tickets","lead","invoice","workflow"]},
+  {id:"meetings",title:"Turning conversations into work",note:"Meetings, voice notes, transcripts, decisions, actions and handovers.",terms:["meeting","voice notes","presentation","minutes","transcript"]},
+  {id:"plan",title:"Planning and organising",note:"Timelines, budgets, schedules, campaigns, launches, agendas and resource planning.",terms:["timeline","budget","schedule","calendar","campaign","launch","agenda","forecast"]},
+  {id:"data",title:"Working with spreadsheets or data",note:"Cleaning, comparing, querying, reporting, spotting patterns and building models.",terms:["csv","spreadsheet","sql","data","forecast","report","sentiment","churn"]},
+  {id:"train",title:"Training people and answering repeat questions",note:"Onboarding, procedures, how-we-do-things knowledge and staff support.",terms:["onboarding","train","staff questions","sop","policy manuals","job descriptions"]},
+  {id:"decide",title:"Making the same kinds of decisions repeatedly",note:"Qualification, approvals, prioritisation, routing, triage and threshold decisions.",terms:["qualify","approve","prioritise","triage","decision","inventory","procurement"]},
+  {id:"create",title:"Creating first drafts from existing information",note:"Documents, plans, copy, policies, specifications, presentations and structured outputs.",terms:["draft","write","create","build","product specification","business plan"]},
+  {id:"monitor",title:"Watching for changes, exceptions or delays",note:"Workflows, stock, service queues, anomalies, performance and things that need escalation.",terms:["monitor","inventory","tickets","fraud","churn","ad spend","workflow"]},
+  {id:"analyse",title:"Comparing, analysing and finding patterns",note:"Customer feedback, competitors, pricing, risk, financials, surveys and performance.",terms:["analyse","assess","compare","risk","sentiment","survey","pricing","competitor","optimise"]}
+];
+
+const activityGrid=document.getElementById("activityGrid");
+const blindspotResults=document.getElementById("blindspotResults");
+const blindspotGrid=document.getElementById("blindspotGrid");
+const showBlindspots=document.getElementById("showBlindspots");
+const clearBlindspots=document.getElementById("clearBlindspots");
+const selectedPatterns=new Set();
+
+function renderPatterns(){
+  activityGrid.innerHTML=WORK_PATTERNS.map(p=>`
+    <button class="activity" type="button" data-id="${p.id}" aria-pressed="${selectedPatterns.has(p.id)}">
+      <strong>${p.title}</strong><span>${p.note}</span>
+    </button>`).join("");
+}
+function opportunityScore(task,pattern){
+  const hay=[task.t,task.c,task.why,task.needs,task.boundary].join(" ").toLowerCase();
+  return pattern.terms.reduce((score,term)=>score+(hay.includes(term.toLowerCase())?1:0),0);
+}
+function showOpportunities(){
+  const patterns=WORK_PATTERNS.filter(p=>selectedPatterns.has(p.id));
+  if(!patterns.length){blindspotResults.hidden=false;blindspotGrid.innerHTML='<div class="blindspot-card"><strong>Choose at least one work pattern.</strong><p>We are looking for what people actually spend time doing.</p></div>';return;}
+  const ranked=TASKS.map(task=>({
+    task,
+    score:patterns.reduce((sum,p)=>sum+opportunityScore(task,p),0)
+  })).filter(x=>x.score>0).sort((a,b)=>b.score-a.score || b.task.could-a.task.could || b.task.can-a.task.can).slice(0,10);
+  blindspotResults.hidden=false;
+  blindspotGrid.innerHTML=ranked.map(({task})=>`
+    <div class="blindspot-card">
+      <div class="task-cat">${esc(task.c)} · ${esc(task.r)}</div>
+      <strong>${esc(task.t)}</strong>
+      <p>${esc(task.why)}</p>
+      <a href="#taskSearch" data-task="${esc(task.t)}">See the full task →</a>
+    </div>`).join("");
+  blindspotResults.scrollIntoView({behavior:"smooth",block:"start"});
+}
+activityGrid.addEventListener("click",e=>{
+  const btn=e.target.closest(".activity");
+  if(!btn)return;
+  const id=btn.dataset.id;
+  selectedPatterns.has(id)?selectedPatterns.delete(id):selectedPatterns.add(id);
+  renderPatterns();
+});
+showBlindspots.addEventListener("click",showOpportunities);
+clearBlindspots.addEventListener("click",()=>{selectedPatterns.clear();renderPatterns();blindspotResults.hidden=true;blindspotGrid.innerHTML="";});
+blindspotGrid.addEventListener("click",e=>{
+  const a=e.target.closest("a[data-task]");
+  if(!a)return;
+  search.value=a.dataset.task;
+  active="All";
+  [...filters.children].forEach((el,i)=>el.setAttribute("aria-pressed",String(i===0)));
+  render();
+});
+renderPatterns();
 const categories=["All",...Array.from(new Set(TASKS.map(x=>x.c))).sort()];
 const grid=document.getElementById("taskGrid");
 const search=document.getElementById("taskSearch");
