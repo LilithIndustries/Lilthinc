@@ -34,14 +34,22 @@
 </div></section>
 <section class="section"><div class="wrap">
 <p class="note">Please leave out confidential, legally privileged, commercially sensitive or personal employee information at this stage. We can put appropriate confidentiality arrangements in place before receiving detailed material.</p>
-<form class="form" id="contactForm" novalidate>
-<label><span>Name</span><input name="name" autocomplete="name" required></label>
-<label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
-<label><span>Company</span><input name="company" autocomplete="organization" required></label>
-<label><span>Role</span><input name="role" autocomplete="organization-title"></label>
-<label class="full"><span>What is happening?</span><textarea name="happening" rows="6" required></textarea></label>
-<label class="full"><span>What have you tried already?</span><textarea name="tried" rows="4"></textarea></label>
-<label class="full"><span>What happens if nothing changes?</span><textarea name="consequence" rows="3"></textarea></label>
+<p class="note">Your enquiry is sent to our Zoho CRM so we can assess and respond to it. Read our <a href="privacy.html">privacy policy</a>.</p>
+<form class="form" id="contactForm" action="https://crm.zoho.com/crm/WebToLeadForm" method="post" accept-charset="UTF-8" novalidate>
+<input type="hidden" name="xnQsjsdp" value="24669b5e9e630563ccb5ac129c46a218e9c68c80f07c1fb78c44ecde431770c9">
+<input type="hidden" name="zc_gad" value="">
+<input type="hidden" name="xmIwtLD" value="1704248552b76149dc4f03b69cad6f9fc5658c9be58287cf0259e644d54b0add674471bd30d9b6034d1b17bef0669ef1">
+<input type="hidden" name="actionType" value="TGVhZHM=">
+<input type="hidden" name="returnURL" value="null">
+<input type="hidden" name="Last Name"><input type="hidden" name="Email"><input type="hidden" name="Company"><input type="hidden" name="Designation"><input type="hidden" name="Description">
+<div hidden><label>Leave this field empty<input name="aG9uZXlwb3Q" tabindex="-1" autocomplete="off"></label></div>
+<label><span>Name</span><input name="name" maxlength="80" autocomplete="name" required></label>
+<label><span>Email</span><input name="email" maxlength="100" type="email" autocomplete="email" required></label>
+<label><span>Company</span><input name="company" maxlength="200" autocomplete="organization" required></label>
+<label><span>Role</span><input name="role" maxlength="100" autocomplete="organization-title"></label>
+<label class="full"><span>What is happening?</span><textarea name="happening" maxlength="8000" rows="6" required></textarea></label>
+<label class="full"><span>What have you tried already?</span><textarea name="tried" maxlength="8000" rows="4"></textarea></label>
+<label class="full"><span>What happens if nothing changes?</span><textarea name="consequence" maxlength="8000" rows="3"></textarea></label>
 <label class="full"><span>Are you open to the possibility that the cause may sit somewhere different from where it first appears?</span><select name="open"><option>Yes</option><option>Probably</option><option>That is why I am here</option></select></label>
 <div class="full"><button class="btn primary" type="submit">Send the problem</button><p id="status" class="micro" style="margin-top:14px" role="status" aria-live="polite"></p></div>
 </form></div></section>
@@ -54,4 +62,24 @@
   </div>
   <div class="wrap legal">Lillith Problem Studio · Australia · Trading structure and legal entity details to be verified before production launch.</div>
 </footer>
-<script>const f=document.getElementById('contactForm'),s=document.getElementById('status');f.addEventListener('submit',e=>{e.preventDefault();[...f.elements].forEach(el=>el.removeAttribute&&el.removeAttribute('aria-invalid'));const d=new FormData(f),email=String(d.get('email')||'').trim();const checks=[['name',String(d.get('name')||'').trim()],['email',/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)],['company',String(d.get('company')||'').trim()],['happening',String(d.get('happening')||'').trim()]];const bad=checks.find(([,ok])=>!ok);if(bad){const el=f.elements[bad[0]];el?.setAttribute('aria-invalid','true');s.textContent='Please complete the required fields and check the email address.';el?.focus();return}s.textContent='Preview mode: the form is valid, but it is not connected to the CRM yet.';});</script><script src="glossary.js"></script><script src="site-ui.js"></script><script src="privacy-consent.js"></script></body></html>
+<script>
+const f=document.getElementById('contactForm'),s=document.getElementById('status');
+f.addEventListener('submit',e=>{
+  [...f.elements].forEach(el=>el.removeAttribute&&el.removeAttribute('aria-invalid'));
+  const value=name=>f.elements.namedItem(name).value.trim();
+  const names=['name','email','company','role','happening','tried','consequence'];
+  const bad=names.find(name=>{const el=f.elements.namedItem(name);return (el.required&&!value(name))||(el.maxLength>0&&value(name).length>el.maxLength)||(name==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value(name)));});
+  if(bad){e.preventDefault();const el=f.elements.namedItem(bad);el.setAttribute('aria-invalid','true');s.textContent='Please complete the required fields, check the email address and shorten any overlong answers.';el.focus();return;}
+  if(value('aG9uZXlwb3Q')){e.preventDefault();s.textContent='Unable to submit this enquiry. Please reload the page and try again.';return;}
+  const mapping={'Last Name':'name','Email':'email','Company':'company','Designation':'role'};
+  Object.entries(mapping).forEach(([target,source])=>{f.elements.namedItem(target).value=value(source);});
+  f.elements.namedItem('Description').value=[
+    'Problem Studio enquiry',
+    'What is happening?\n'+value('happening'),
+    'What have you tried already?\n'+(value('tried')||'Not provided'),
+    'What happens if nothing changes?\n'+(value('consequence')||'Not provided'),
+    'Open to a different cause?\n'+value('open')
+  ].join('\n\n');
+  s.textContent='Sending your enquiry… Please wait for the submission confirmation.';
+});
+</script><script src="glossary.js"></script><script src="site-ui.js"></script><script src="privacy-consent.js"></script></body></html>
