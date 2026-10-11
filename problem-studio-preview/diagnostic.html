@@ -130,7 +130,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <div class="mk">Part 1 · What you can see</div>
 <h2>What are you seeing?</h2>
 <p class="sub">Choose what is being experienced first. Leave the proposed solution aside for a moment.</p>
-<div class="interaction-guide"><span class="mouse-copy">Click one option below, or describe your own</span><span class="touch-copy">Tap one option below, or describe your own</span></div>
+<div class="interaction-guide"><span class="mouse-copy">Click all that apply; click again to deselect, or describe your own</span><span class="touch-copy">Tap all that apply; tap again to deselect, or describe your own</span></div>
 <div class="sym" id="sym"></div>
 <div class="custom-sym">
   <label for="customSym"><span class="mk">Something else?</span></label>
@@ -198,7 +198,7 @@ footer{border-top:1px solid var(--ink);padding:20px 0 40px}
 <footer><div class="w mk">Lillith Problem Studio · This tool supports thinking; it does not diagnose a business. · <a href="index.html">Home</a> · <a href="glossary.html">Glossary</a> · <a href="terms.html">Website terms</a> · <a href="privacy.html">Privacy</a> · <a href="cookies.html">Cookies</a> · <a href="accessibility.html">Accessibility</a> · Australia</div></footer>
 
 <script>
-const $=s=>document.querySelector(s),st={sym:null,customSym:"",lens:null,sc:0,iv:null,sol:null,steps:{}};
+const $=s=>document.querySelector(s),st={syms:[],customSym:"",lens:null,sc:0,iv:null,sol:null,steps:{}};
 const LN=["Demand & priorities","Decisions & ownership","Work & flow","Information & handoffs","Capacity & capability","Quality & controls","Feedback & learning"];
 
 /* ---------- Part 1 ---------- */
@@ -213,10 +213,24 @@ const SY=[
 ["Work constantly gets stuck waiting",[[1,"Decisions","Work may be waiting on approvals or an owner nobody has named."],[3,"Clarification","Work may wait for answers that nobody has the information to give quickly."],[4,"Scarce capability","One person or team may be the only route for a certain kind of work."],[0,"Work in progress","So much may be open at once that each item queues behind the others."]]],
 ["Mistakes and rework keep appearing",[[3,"Handoffs","Context may be lost or mistranslated as work passes between people or systems."],[5,"Checks","Checks may happen late, after errors have already been built on."],[4,"Capability","People may be asked to do work that needs skills they have not had a chance to build."],[0,"Priorities","Constantly changing priorities may be forcing rushed, half-informed work."]]],
 ["Things work, but only because certain people hold everything together",[[3,"Knowledge","How things work may be undocumented and live in a few heads."],[4,"Concentration","Critical capability may sit with too few people, who compensate for gaps."],[2,"Workarounds","The work itself may be designed so that it only functions with heroic effort."],[1,"Ownership","Responsibility may be informal, so it falls to whoever cares most."]]]];
-$("#sym").innerHTML=SY.map((s,i)=>`<button aria-pressed="false" data-i="${i}">${s[0]}</button>`).join("");
-$("#sym").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.sym=+b.dataset.i;st.customSym="";$("#customSym").value="";
- [...$("#sym").children].forEach(x=>x.setAttribute("aria-pressed",x===b));
- $("#mechOut").innerHTML=`<div class="mk" style="margin-top:34px">Possible causes to investigate</div><div class="mech">`+SY[st.sym][1].map(m=>`<article><button class="lk" data-l="${m[0]}">${LN[m[0]]}</button><h3>${m[1]}</h3><p>${m[2]}</p></article>`).join("")+`</div><p class="pull">Same visible problem. Different possible causes. Different appropriate responses.</p><p class="sub">These are possibilities, not diagnoses. More than one may be true. Each links to an area you can explore below.</p>`;notes()};
+$("#sym").innerHTML=SY.map((s,i)=>`<button type="button" aria-pressed="false" data-i="${i}">${s[0]}</button>`).join("");
+function renderSymptoms(){
+ [...$("#sym").children].forEach(x=>x.setAttribute("aria-pressed",st.syms.includes(+x.dataset.i)));
+ if(!st.syms.length){$("#mechOut").innerHTML="";notes();return}
+ const areas=new Map();
+ st.syms.forEach(i=>SY[i][1].forEach(m=>{
+   if(!areas.has(m[0]))areas.set(m[0],[]);
+   areas.get(m[0]).push({sym:i,cause:m});
+ }));
+ const cards=[...areas].map(([lens,items])=>`<article><button class="lk" data-l="${lens}">${LN[lens]}</button>`+
+   (items.length>1?`<p class="mk">Shared by ${items.length} selected symptoms</p>`:"")+
+   items.map(({sym,cause:m})=>`<h3>${m[1]}</h3>`+(st.syms.length>1?`<p class="micro">For: ${SY[sym][0]}</p>`:"")+`<p>${m[2]}</p>`).join("")+`</article>`).join("");
+ $("#mechOut").innerHTML=`<div class="mk" style="margin-top:34px">Possible causes to investigate</div><div class="mech">${cards}</div><p class="pull">Same visible problem. Different possible causes. Different appropriate responses.</p><p class="sub">These are possibilities, not diagnoses. More than one may be true. Shared areas are clues to explore, not proof of a common cause. Each links to an area you can explore below.</p>`;
+ notes();
+}
+$("#sym").onclick=e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;
+ st.syms=st.syms.includes(i)?st.syms.filter(x=>x!==i):[...st.syms,i].sort((a,b)=>a-b);
+ st.customSym="";$("#customSym").value="";renderSymptoms()};
 $("#mechOut").onclick=e=>{const b=e.target.closest(".lk");if(b){pickLens(+b.dataset.l);$("#p2").scrollIntoView()}};
 $("#customUse").onclick=()=>{
  const value=$("#customSym").value.trim();
@@ -225,7 +239,7 @@ $("#customUse").onclick=()=>{
    $("#customSym").focus();
    return;
  }
- st.sym=null; st.customSym=value;
+ st.syms=[]; st.customSym=value;
  [...$("#sym").children].forEach(x=>x.setAttribute("aria-pressed","false"));
  $("#mechOut").innerHTML=`<div class="custom-path">
    <div class="mk">Your description</div>
@@ -324,7 +338,7 @@ $("#chk").innerHTML=QS.map((q,i)=>`<li><label><input type="checkbox" data-i="${i
 $("#chk").onchange=notes;
 $("#customSym").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")$("#customUse").click()});
 function notes(){const L=[];
- L.push("What I am seeing: "+(st.customSym|| (st.sym==null?"(not selected)":SY[st.sym][0])));
+ L.push("What I am seeing: "+(st.customSym|| (st.syms.length?st.syms.map(i=>SY[i][0]).join("; "):"(not selected)")));
  if(st.lens!=null)L.push("Lens I explored: "+LN[st.lens]);
  if(st.iv!=null){const t=sim.last;L.push("Response I tried in the simulator: "+IV[st.iv][0]+" in “"+SC[st.sc][0]+"”")}
  if(st.sol!=null)L.push("Solution we have been considering: "+SO[st.sol][0]);
