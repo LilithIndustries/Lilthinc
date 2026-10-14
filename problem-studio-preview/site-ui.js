@@ -22,6 +22,10 @@
   `;
   document.head.appendChild(style);
 
+  document.querySelectorAll('.legal, .legal-line').forEach(el=>{
+    if((el.textContent||'').includes('Trading structure')) el.textContent='The Problem Studio · Lillith Industries Pty. Ltd. · Australia';
+  });
+
   const header=document.querySelector('.site-header, .topbar');
   const desktopNav=header?.querySelector('nav');
   if(!header || !desktopNav) return;
