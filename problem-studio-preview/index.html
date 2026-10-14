@@ -3,7 +3,7 @@
 <head>
 <title>Business Problem Diagnostic | Lillith Problem Studio</title>
 <meta name="description" content="Independent problem-solving for complex, cross-functional business problems. Find what is actually causing the issue before you commit to a solution.">
-<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="index,follow">
 <meta property="og:locale" content="en_AU">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lillith Problem Studio">
@@ -474,9 +474,33 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
   <div class="shell" style="margin-top:38px"><a class="text-link text-link--large" href="insights.html">Read the blog <span>↗</span></a></div>
 </section>
 
+
+<section class="engagement section-space" id="specialist-network">
+  <div class="shell engagement-head reveal">
+    <div><div class="micro">07 / SPECIALIST NETWORK</div><h2>The room should be smarter<br><em>than any one person.</em></h2></div>
+    <div class="case-meta"><span>FOUNDER-LED</span><span>Specialists engaged where the evidence requires them</span></div>
+  </div>
+  <div class="shell case-layout">
+    <aside class="case-question reveal">
+      <p>Complex problems rarely respect professional boundaries. The lead investigator holds the whole problem, then brings in specialist judgment where it materially improves the diagnosis.</p>
+      <p>No discipline is there to sell itself. Not every engagement uses every specialist. Where regulated expertise is required, appropriately qualified practitioners are engaged.</p>
+    </aside>
+    <div class="case-timeline reveal reveal-delay-1">
+      <article><span>01</span><h3>Founder &amp; Lead Problem Investigator</h3><p>Works across the problem rather than from inside one discipline: following contradictions, hidden assumptions, information loss, system effects and the distance between what an organisation believes and what is actually happening.</p></article>
+      <article><span>02</span><h3>Technical Architecture</h3><p>Examines architecture, integrations, dependencies, technical debt and ownership boundaries to separate genuine technical constraints from organisational symptoms.</p></article>
+      <article><span>03</span><h3>Data &amp; AI</h3><p>Interrogates data quality, provenance, measurement, analytics, automation and AI systems to establish what the evidence genuinely supports — and where technology creates useful leverage without replacing judgment.</p></article>
+      <article><span>04</span><h3>Product</h3><p>Looks behind the roadmap at customer evidence, prioritisation, decision rights, commercial pressure and delivery constraints to reconnect product decisions with the outcome the organisation is actually trying to create.</p></article>
+      <article><span>05</span><h3>Service Design</h3><p>Follows the experience across handoffs, workflows and organisational seams to expose where customers or employees are compensating for failures elsewhere in the system.</p></article>
+      <article><span>06</span><h3>Organisational Systems &amp; Change</h3><p>Examines structure, decision authority, incentives, workload, trust and change history — not to diagnose personalities, but to understand how organisational conditions shape behaviour and information flow.</p></article>
+      <article><span>07</span><h3>Security, Risk &amp; Regulatory</h3><p>Tests security architecture, governance, controls and regulatory constraints where risk materially shapes the intervention, distinguishing real safeguards from risk that has merely been transferred elsewhere.</p></article>
+      <article><span>08</span><h3>Finance &amp; Economics</h3><p>Follows commercial models, unit economics, cost structures, pricing, resource allocation and incentives to identify hidden costs, value leakage and metrics that may be driving the behaviour they were meant to measure.</p></article>
+    </div>
+  </div>
+</section>
+
 <section class="truth section-space">
   <div class="shell truth-layout reveal">
-    <div class="micro">07 / NEXT STEP</div>
+    <div class="micro">08 / NEXT STEP</div>
     <blockquote>Tell us what is happening. <em>We’ll work out whether we’re the right people to investigate it.</em></blockquote>
     <a class="button button-primary" href="contact.html">Bring us the problem <span>↗</span></a>
   </div>
@@ -488,7 +512,7 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
     <div><a href="problems.html">Problems</a><a href="diagnostic.html">Diagnostic</a><a href="insights.html">Insights</a><a href="glossary.html">Glossary</a><a href="how-we-work.html">How we work</a><a href="contact.html">Contact</a></div>
     <div><a href="terms.html">Website terms</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="accessibility.html">Accessibility</a></div>
   </div>
-  <div class="shell legal-line">Australia · Trading structure and exact legal entity details to be verified before production launch.</div>
+  <div class="shell legal-line">The Problem Studio · Operated by Lillith Industries Pty. Ltd. · ABN 55 703 152 470 · ACN 703 152 470 · Australia</div>
 </footer>
 
   <script>
@@ -680,24 +704,6 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
     applyLibraryFilter();
   }
 
-  const form=document.getElementById('intakeForm');
-  const status=document.getElementById('formStatus');
-  if(form){
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const data=new FormData(form);
-      const name=String(data.get('name')||'').trim();
-      const email=String(data.get('email')||'').trim();
-      const company=String(data.get('company')||'').trim();
-      const happening=String(data.get('happening')||'').trim();
-      const validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if(!name||!company||!happening||!validEmail){
-        status.textContent='Please complete the required fields and use a valid email address.';
-        return;
-      }
-      status.textContent='Prototype mode: form validated successfully. CRM handoff is not connected in this preview.';
-    });
-  }
 })();
 
 </script>
