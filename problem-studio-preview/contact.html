@@ -40,7 +40,7 @@
 <input type="hidden" name="zc_gad" value="">
 <input type="hidden" name="xmIwtLD" value="1704248552b76149dc4f03b69cad6f9fc5658c9be58287cf0259e644d54b0add674471bd30d9b6034d1b17bef0669ef1">
 <input type="hidden" name="actionType" value="TGVhZHM=">
-<input type="hidden" name="returnURL" value="null">
+<input type="hidden" name="returnURL" value="https://lillith-problem-studio-preview-20261003.onrender.com/thank-you.html">
 <input type="hidden" name="Last Name"><input type="hidden" name="Email"><input type="hidden" name="Company"><input type="hidden" name="Designation"><input type="hidden" name="Description">
 <div hidden><label>Leave this field empty<input name="aG9uZXlwb3Q" tabindex="-1" autocomplete="off"></label></div>
 <label><span>Name</span><input name="name" maxlength="80" autocomplete="name" required></label>
@@ -80,6 +80,7 @@ f.addEventListener('submit',e=>{
     'What happens if nothing changes?\n'+(value('consequence')||'Not provided'),
     'Open to a different cause?\n'+value('open')
   ].join('\n\n');
+  f.elements.namedItem('returnURL').value=new URL('thank-you.html',window.location.href).href;
   s.textContent='Sending your enquiry… Please wait for the submission confirmation.';
 });
 </script><script src="glossary.js"></script><script src="site-ui.js"></script><script src="privacy-consent.js"></script></body></html>
