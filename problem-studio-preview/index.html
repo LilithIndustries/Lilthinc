@@ -196,7 +196,18 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
   html{scroll-behavior:auto}.reveal,.stage{opacity:1;transform:none;transition:none}.hero{height:auto;min-height:100vh}.hero-sticky{position:relative;min-height:100vh;height:auto;padding-top:90px}.hero-system{transform:translate(-50%,-50%) scale(1);opacity:.35}.hero-reality{clip-path:inset(0 round 0);opacity:.25}.optical-pane{display:none}.hero-copy{position:relative;min-height:100vh;justify-content:flex-end;padding-top:45vh}.hero-side-note{display:none}
 }
 
-</style>
+/* Community support: update the delivered count only after support is provided. */
+.community-support{padding:48px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--chalk)}
+.community-support-layout{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:center}
+.community-support h2{font-size:clamp(1.6rem,3vw,2.6rem);line-height:1.15;letter-spacing:-.03em;margin:12px 0}
+.community-support-copy{max-width:730px}
+.community-support-copy p{margin:0;color:var(--graphite);line-height:1.65}
+.community-support-count{margin:0;min-width:180px;text-align:right}
+.community-support-count strong{display:block;font-size:clamp(3.5rem,7vw,6rem);font-weight:500;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.community-support-count span{display:block;margin-top:8px;font-size:1rem;color:var(--ink)}
+.community-support-count small{display:block;margin-top:8px;font-size:.75rem;color:var(--graphite)}
+@media(max-width:640px){.community-support-layout{grid-template-columns:1fr;gap:28px}.community-support-count{text-align:left;min-width:0}}
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -495,6 +506,18 @@ repeating-linear-gradient(90deg,rgba(10,20,38,.022) 0 1px,transparent 1px 26px);
       <article><span>07</span><h3>Security, Risk &amp; Regulatory</h3><p>Tests security architecture, governance, controls and regulatory constraints where risk materially shapes the intervention, distinguishing real safeguards from risk that has merely been transferred elsewhere.</p></article>
       <article><span>08</span><h3>Finance &amp; Economics</h3><p>Follows commercial models, unit economics, cost structures, pricing, resource allocation and incentives to identify hidden costs, value leakage and metrics that may be driving the behaviour they were meant to measure.</p></article>
     </div>
+  </div>
+</section>
+
+<section class="community-support" id="community-support" aria-labelledby="community-support-title">
+  <div class="shell community-support-layout">
+    <div class="community-support-copy">
+      <div class="micro">Practical support, passed on</div>
+      <h2 id="community-support-title">One actionable path forward.</h2>
+      <p>For every paid client, we donate practical support to someone who needs a hand, helping them leave with one actionable path forward.</p>
+    </div>
+    <!-- Delivered support count. Increase after a new person receives free support, not after a payment or enquiry. -->
+    <p class="community-support-count"><strong>1</strong><span>problem supported</span><small>Free support delivered so far</small></p>
   </div>
 </section>
 
